@@ -12,8 +12,6 @@ namespace Scheduling.Domain.DoctorDay
     {
         private readonly Slots _slots = new Slots();
 
-        private bool _isArchived;
-
         private bool _isCancelled;
 
         private bool _isScheduled;
@@ -26,13 +24,12 @@ namespace Scheduling.Domain.DoctorDay
             Register<SlotBookingCancelled>(When);
             Register<SlotScheduleCancelled>(When);
             Register<DayScheduleCancelled>(When);
-            Register<DayScheduleArchived>(When);
             RegisterSnapshot<DaySnapshot>(LoadDaySnapshot, GetDaySnapshot);
         }
 
         public void Schedule(DoctorId doctorId, DateTime date, List<ScheduledSlot> slots, Func<Guid> idGenerator)
         {
-            IsCancelledOrArchived();
+            IsCancelled();
 
             if (_isScheduled)
                 throw new DayAlreadyScheduledException();
@@ -48,7 +45,7 @@ namespace Scheduling.Domain.DoctorDay
 
         public void ScheduleSlot(Guid slotId, DateTime startTime, TimeSpan duration)
         {
-            IsCancelledOrArchived();
+            IsCancelled();
             IsNotScheduled();
 
             if (_slots.Overlaps(startTime, duration))
@@ -59,7 +56,7 @@ namespace Scheduling.Domain.DoctorDay
 
         public void BookSlot(SlotId slotId, PatientId patientId)
         {
-            IsCancelledOrArchived();
+            IsCancelled();
             IsNotScheduled();
 
             var slotStatus = _slots.GetStatus(slotId);
@@ -78,7 +75,7 @@ namespace Scheduling.Domain.DoctorDay
 
         public void CancelSlotBooking(Guid slotId, string reason)
         {
-            IsCancelledOrArchived();
+            IsCancelled();
             IsNotScheduled();
 
             if (!_slots.HasBookedSlot(slotId))
@@ -87,19 +84,9 @@ namespace Scheduling.Domain.DoctorDay
             Raise(new SlotBookingCancelled(Id, slotId, reason));
         }
 
-        public void Archive()
-        {
-            IsNotScheduled();
-
-            if (_isArchived)
-                throw new DayScheduleAlreadyArchivedException();
-
-            Raise(new DayScheduleArchived(Id));
-        }
-
         public void Cancel()
         {
-            IsCancelledOrArchived();
+            IsCancelled();
             IsNotScheduled();
 
             foreach (var bookedSlot in _slots.GetBookedSlots())
@@ -140,14 +127,8 @@ namespace Scheduling.Domain.DoctorDay
         private void When(SlotScheduleCancelled @event) =>
             _slots.Remove(@event.SlotId);
 
-        private void When(DayScheduleArchived @event) =>
-            _isArchived = true;
-
-        private void IsCancelledOrArchived()
+        private void IsCancelled()
         {
-            if (_isArchived)
-                throw new DayScheduleAlreadyArchivedException();
-
             if (_isCancelled)
                 throw new DayScheduleAlreadyCancelledException();
         }
@@ -161,7 +142,7 @@ namespace Scheduling.Domain.DoctorDay
         private object GetDaySnapshot() =>
             new DaySnapshot
             {
-                IsArchived = _isArchived,
+                IsArchived = false,
                 IsCancelled = _isCancelled,
                 Slots = _slots
                     .All()
@@ -178,7 +159,6 @@ namespace Scheduling.Domain.DoctorDay
         private void LoadDaySnapshot(DaySnapshot daySnapshot)
         {
             daySnapshot.Slots.ForEach(s => _slots.Add(s.Id, s.StartTime, s.Duration, s.Booked));
-            _isArchived = daySnapshot.IsArchived;
             _isCancelled = daySnapshot.IsCancelled;
             _isScheduled = daySnapshot.IsScheduled;
         }

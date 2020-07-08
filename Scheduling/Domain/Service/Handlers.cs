@@ -47,13 +47,6 @@ namespace Scheduling.Domain.Service
                 day.Cancel();
                 await _repository.Save(day, m);
             });
-
-            Register<ArchiveDaySchedule>(async (c, m) =>
-            {
-                var day = await _repository.Get(new DayId(c.DayId));
-                day.Archive();
-                await _repository.Save(day, m);
-            });
         }
     }
 }

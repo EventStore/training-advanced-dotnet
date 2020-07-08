@@ -217,10 +217,5 @@ namespace Scheduling.Test
                 Assert.IsType<DayScheduleArchived>(e.First());
             });
         }
-
-        [Fact]
-        public void archive_cancelled_day()
-        {
-        }
     }
 }

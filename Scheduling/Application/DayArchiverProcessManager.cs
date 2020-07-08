@@ -44,15 +44,10 @@ namespace Scheduling.Application
             {
                 var streamName = StreamName.For<Day>(e.DayId);
 
-                var events = await eventStore.LoadEvents(streamName);
-                coldStorage.SaveAll(events);
-
-                var lastVersion = await eventStore.GetLastVersion(streamName);
-
-                if (lastVersion.HasValue)
-                {
-                    await eventStore.TruncateStream(streamName, lastVersion.Value);
-                }
+                // Get events from store
+                // save to cold storage
+                // Get the latest version from the store
+                // Truncate stream upto last version
             });
         }
 
