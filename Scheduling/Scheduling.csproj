@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+    <PropertyGroup>
+        <TargetFramework>netcoreapp3.1</TargetFramework>
+        <RootNamespace>Application</RootNamespace>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="EventStore.Client.Grpc.Streams" Version="20.6.0" />
+      <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.1.5" />
+      <PackageReference Include="MongoDB.Driver" Version="2.10.4" />
+      <PackageReference Include="RavenDB.Client" Version="4.2.103" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Scheduling.Domain\Scheduling.Domain.csproj" />
+    </ItemGroup>
+
+
+</Project>
