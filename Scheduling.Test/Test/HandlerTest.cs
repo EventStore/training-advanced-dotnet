@@ -9,6 +9,8 @@ namespace Scheduling.Test.Test
     {
         protected abstract EventHandler GetHandler();
 
+        protected bool EnableAtLeastOnceMonkey { get; set; }
+
         private EventHandler _eventHandler;
 
         protected async Task Given(params object[] events)
@@ -17,6 +19,17 @@ namespace Scheduling.Test.Test
             foreach (var @event in events)
             {
                 await _eventHandler.Handle(@event.GetType(), @event);
+
+                if (EnableAtLeastOnceMonkey)
+                    await _eventHandler.Handle(@event.GetType(), @event);
+            }
+
+            if (EnableAtLeastOnceMonkey)
+            {
+                foreach (var @event in events.Take(events.Length - 1))
+                {
+                    await _eventHandler.Handle(@event.GetType(), @event);
+                }
             }
         }
 

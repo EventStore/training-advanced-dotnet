@@ -1,29 +1,37 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Application.Infrastructure.InMemory;
+using MongoDB.Driver;
 using Scheduling.Domain.Application;
 using Scheduling.Domain.Domain.DoctorDay.Events;
 using Scheduling.Domain.Domain.ReadModel;
+using Scheduling.Domain.Infrastructure.MongoDb;
 using Scheduling.Test.Test;
 using Xunit;
 using EventHandler = Scheduling.Domain.Infrastructure.Projections.EventHandler;
 
 namespace Scheduling.Test
 {
-    public class AvailableSlotsHandlerTest : HandlerTest
+    public class AvailableSlotsHandlerV2Test : HandlerTest
     {
-        private static InMemoryAvailableSlotsRepository _repository;
+        private static MongoDbAvailableSlotsRepository _repository;
 
         private readonly DateTime _now = DateTime.UtcNow;
 
         private TimeSpan _tenMinutes = TimeSpan.FromMinutes(10);
 
+        public AvailableSlotsHandlerV2Test()
+        {
+            EnableAtLeastOnceMonkey = false;
+        }
+
         protected override EventHandler GetHandler()
         {
-            _repository = new InMemoryAvailableSlotsRepository();
-            _repository.Clear();
-            return new AvailableSlotsProjection(_repository);
+            var mongoClient = new MongoClient("mongodb://localhost");
+            _repository = new MongoDbAvailableSlotsRepository(mongoClient.GetDatabase(Guid.NewGuid().ToString()));
+            return new AvailableSlotsProjectionV2(_repository);
         }
 
         [Fact]
@@ -31,8 +39,7 @@ namespace Scheduling.Test
         {
             var scheduled = new SlotScheduled(Guid.NewGuid(), "dayId", _now, _tenMinutes);
             await Given(scheduled);
-            Then(new List<AvailableSlot>
-            {
+            Then(
                 new AvailableSlot
                 {
                     Date = scheduled.SlotStartTime.Date,
@@ -42,7 +49,7 @@ namespace Scheduling.Test
                     IsBooked = false,
                     StartTime = scheduled.SlotStartTime
                 }
-            }, await _repository.GetAvailableSlotsOn(_now));
+                , (await _repository.GetAvailableSlotsOn(_now)).First());
         }
 
         [Fact]

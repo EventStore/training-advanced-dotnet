@@ -66,7 +66,7 @@ namespace Scheduling.Domain.Infrastructure.MongoDb
         //     => database.For<T>().DeleteOneAsync(Builders<T>.Filter.Eq(x => x.Id, id));
     }
 
-    public class Document<T> : Value<T> where T : Value<T>
+    public class Document
     {
         public string Id { get; set; }
     }
