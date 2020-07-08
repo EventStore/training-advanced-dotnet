@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Scheduling.Domain.Domain.DoctorDay.Events;
-using Scheduling.Domain.Domain.ReadModel;
-using Scheduling.Domain.EventSourcing;
-using Scheduling.Domain.Infrastructure.Commands;
+using Scheduling.Domain.DoctorDay.Events;
+using Scheduling.Domain.ReadModel;
+using Scheduling.EventSourcing;
+using Scheduling.Infrastructure.Commands;
 
 namespace Scheduling.Controllers
 {

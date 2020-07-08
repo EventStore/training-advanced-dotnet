@@ -1,5 +1,5 @@
 using System.Threading.Tasks;
-using Scheduling.Domain.EventSourcing;
+using Scheduling.EventSourcing;
 
 namespace Scheduling.Test.Test
 {

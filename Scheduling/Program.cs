@@ -5,16 +5,12 @@ using EventStore.Client;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 using MongoDB.Driver;
-using Scheduling.Domain.Application;
-using Scheduling.Domain.Domain.DoctorDay.Events;
-using Scheduling.Domain.Domain.ReadModel;
-using Scheduling.Domain.Domain.Service;
-using Scheduling.Domain.EventSourcing;
-using Scheduling.Domain.Infrastructure.Commands;
-using Scheduling.Domain.Infrastructure.EventStore;
-using Scheduling.Domain.Infrastructure.InMemory;
-using Scheduling.Domain.Infrastructure.MongoDb;
-using Scheduling.Domain.Infrastructure.Projections;
+using Scheduling.Application;
+using Scheduling.Domain.DoctorDay.Events;
+using Scheduling.Infrastructure.EventStore;
+using Scheduling.Infrastructure.InMemory;
+using Scheduling.Infrastructure.MongoDb;
+using Scheduling.Infrastructure.Projections;
 
 namespace Scheduling
 {

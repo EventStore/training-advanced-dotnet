@@ -1,5 +1,5 @@
 using System;
-using Scheduling.Domain.Domain.DoctorDay.Commands;
+using Scheduling.Domain.DoctorDay.Commands;
 
 namespace Scheduling.Controllers
 {

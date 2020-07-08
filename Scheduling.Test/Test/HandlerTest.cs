@@ -1,6 +1,6 @@
 using System.Linq;
 using System.Threading.Tasks;
-using Scheduling.Domain.Infrastructure.Projections;
+using Scheduling.Infrastructure.Projections;
 using Xunit;
 
 namespace Scheduling.Test.Test

@@ -2,15 +2,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Application.Infrastructure.InMemory;
 using MongoDB.Driver;
-using Scheduling.Domain.Application;
-using Scheduling.Domain.Domain.DoctorDay.Events;
-using Scheduling.Domain.Domain.ReadModel;
-using Scheduling.Domain.Infrastructure.MongoDb;
+using Scheduling.Application;
+using Scheduling.Domain.DoctorDay.Events;
+using Scheduling.Domain.ReadModel;
+using Scheduling.Infrastructure.MongoDb;
 using Scheduling.Test.Test;
 using Xunit;
-using EventHandler = Scheduling.Domain.Infrastructure.Projections.EventHandler;
+using EventHandler = Scheduling.Infrastructure.Projections.EventHandler;
 
 namespace Scheduling.Test
 {

@@ -8,13 +8,10 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using MongoDB.Driver;
-using Scheduling.Domain.Domain.DoctorDay.Events;
-using Scheduling.Domain.Domain.ReadModel;
-using Scheduling.Domain.Domain.Service;
-using Scheduling.Domain.EventSourcing;
-using Scheduling.Domain.Infrastructure.Commands;
-using Scheduling.Domain.Infrastructure.EventStore;
-using Scheduling.Domain.Infrastructure.MongoDb;
+using Scheduling.Domain.ReadModel;
+using Scheduling.EventSourcing;
+using Scheduling.Infrastructure.EventStore;
+using Scheduling.Infrastructure.MongoDb;
 
 namespace Scheduling
 {

@@ -4,15 +4,15 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using EventStore.Client;
-using Scheduling.Domain.Application;
-using Scheduling.Domain.Domain.DoctorDay.Commands;
-using Scheduling.Domain.Domain.DoctorDay.Events;
-using Scheduling.Domain.EventSourcing;
-using Scheduling.Domain.Infrastructure.EventStore;
-using Scheduling.Domain.Infrastructure.InMemory;
+using Scheduling.Application;
+using Scheduling.Domain.DoctorDay.Commands;
+using Scheduling.Domain.DoctorDay.Events;
+using Scheduling.EventSourcing;
+using Scheduling.Infrastructure.EventStore;
+using Scheduling.Infrastructure.InMemory;
 using Scheduling.Test.Test;
 using Xunit;
-using EventHandler = Scheduling.Domain.Infrastructure.Projections.EventHandler;
+using EventHandler = Scheduling.Infrastructure.Projections.EventHandler;
 
 namespace Scheduling.Test
 {

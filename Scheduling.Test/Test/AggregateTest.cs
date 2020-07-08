@@ -2,8 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Scheduling.Domain.EventSourcing;
-using Scheduling.Domain.Infrastructure.Commands;
+using Scheduling.EventSourcing;
+using Scheduling.Infrastructure.Commands;
 using Xunit;
 
 namespace Scheduling.Test.Test

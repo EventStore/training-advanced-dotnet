@@ -1,12 +1,12 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Scheduling.Domain.Domain.DoctorDay;
-using Scheduling.Domain.Domain.DoctorDay.Commands;
-using Scheduling.Domain.Domain.DoctorDay.Events;
-using Scheduling.Domain.Domain.DoctorDay.Exceptions;
-using Scheduling.Domain.Domain.Service;
-using Scheduling.Domain.Infrastructure.EventStore;
+using Scheduling.Domain.DoctorDay;
+using Scheduling.Domain.DoctorDay.Commands;
+using Scheduling.Domain.DoctorDay.Events;
+using Scheduling.Domain.DoctorDay.Exceptions;
+using Scheduling.Domain.Service;
+using Scheduling.Infrastructure.EventStore;
 using Scheduling.Test.Test;
 using Xunit;
 

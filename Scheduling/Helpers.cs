@@ -1,9 +1,9 @@
 using System;
 using System.Net.Http;
 using EventStore.Client;
-using Scheduling.Domain.Domain.Service;
-using Scheduling.Domain.Infrastructure.Commands;
-using Scheduling.Domain.Infrastructure.EventStore;
+using Scheduling.Domain.Service;
+using Scheduling.Infrastructure.Commands;
+using Scheduling.Infrastructure.EventStore;
 
 namespace Scheduling
 {

@@ -1,7 +1,5 @@
 using System;
 using Newtonsoft.Json.Linq;
-using Scheduling.Domain.Domain.DoctorDay.Events;
-using Scheduling.Domain.EventSourcing;
 using Xunit;
 
 namespace Scheduling.Test

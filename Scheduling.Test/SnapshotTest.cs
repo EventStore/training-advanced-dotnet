@@ -4,11 +4,11 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using EventStore.Client;
-using Scheduling.Domain.Domain.DoctorDay;
-using Scheduling.Domain.Domain.DoctorDay.Commands;
-using Scheduling.Domain.Domain.DoctorDay.Events;
-using Scheduling.Domain.EventSourcing;
-using Scheduling.Domain.Infrastructure.EventStore;
+using Scheduling.Domain.DoctorDay;
+using Scheduling.Domain.DoctorDay.Commands;
+using Scheduling.Domain.DoctorDay.Events;
+using Scheduling.EventSourcing;
+using Scheduling.Infrastructure.EventStore;
 using Xunit;
 
 namespace Scheduling.Test

@@ -2,7 +2,7 @@
 
     <PropertyGroup>
         <TargetFramework>netcoreapp3.1</TargetFramework>
-        <RootNamespace>Application</RootNamespace>
+        <RootNamespace>Scheduling</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
