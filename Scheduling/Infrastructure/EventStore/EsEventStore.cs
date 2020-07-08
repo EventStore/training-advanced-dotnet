@@ -108,16 +108,21 @@ namespace Scheduling.Infrastructure.EventStore
 
         public Task AppendSnapshot(string streamName, int aggregateVersion, object snapshot)
         {
-            var snapshotEvent = snapshot.SerializeSnapshot(new SnapshotMetadata {Version = aggregateVersion});
+            // Serialize the snapshot (extension method)
+            // Get snapshot stream name
+            // Append snapshot to stream
+            return Task.CompletedTask;
+        }
 
-            return _client.AppendToStreamAsync($"{_tenantPrefix}snapshot-{streamName}", StreamState.Any,
-                new List<EventData> {snapshotEvent});
+        private string GetSnapshotStreamName(string streamName)
+        {
+            return $"{_tenantPrefix}snapshot-{streamName}";
         }
 
         public async Task<SnapshotEnvelope> LoadSnapshot(string streamName)
         {
             var response = _client
-                .ReadStreamAsync(Direction.Backwards, $"{_tenantPrefix}snapshot-{streamName}", StreamPosition.End, 1);
+                .ReadStreamAsync(Direction.Backwards, GetSnapshotStreamName(streamName), StreamPosition.End, 1);
 
             await response.ReadState;
             if (await response.ReadState == ReadState.StreamNotFound)

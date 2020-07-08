@@ -50,7 +50,7 @@ namespace Scheduling.Infrastructure.EventStore
 
             aggregate.Id = aggregateId;
 
-            var version = -1;
+            int? version = null;
 
             // Load snapshot
             if (aggregate is AggregateRootSnapshot snapshotAggregate)
@@ -66,17 +66,13 @@ namespace Scheduling.Infrastructure.EventStore
             return aggregate;
         }
 
-        private async Task<int> LoadSnapshot(string streamName, AggregateRootSnapshot snapshotAggregate)
+        private async Task<int?> LoadSnapshot(string streamName, AggregateRootSnapshot snapshotAggregate)
         {
-            var snapshotEnvelope = await _store.LoadSnapshot(streamName);
-
-            if (snapshotEnvelope != null)
-            {
-                snapshotAggregate.LoadSnapshot(snapshotEnvelope.Snapshot, snapshotEnvelope.Metadata.Version);
-                return snapshotEnvelope.Metadata.Version + 1;
-            }
-
-            return -1;
+            // Load snapshot from the _store
+            // If there is one then load it into the aggregate
+            // Return next expected version
+            // If no snapshot return null
+            return null;
         }
 
         static string GetStreamName<T>(string aggregateId)

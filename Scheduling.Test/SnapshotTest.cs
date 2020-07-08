@@ -71,7 +71,7 @@ namespace Scheduling.Test
             await esAggregateStore.Save(aggregate,
                 new CommandMetadata(new CorrelationId(Guid.NewGuid()), new CausationId(Guid.NewGuid())));
 
-            await esStore.TruncateStream(StreamName.For<Day>(aggregate.Id), Convert.ToUInt64(aggregate.GetChanges().Count()));
+            await esStore.TruncateStream(StreamName.For<Day>(aggregate.Id), 6);
 
             var reloadedAggregate = await esAggregateStore.Load<Day>(aggregate.Id);
 
