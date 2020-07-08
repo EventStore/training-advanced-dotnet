@@ -44,6 +44,15 @@ namespace Scheduling.Domain.Infrastructure.EventStore
             return JsonConvert.DeserializeObject<T>(jsonData);
         }
 
+        public static EventData SerializeSnapshot(this object snapshot, SnapshotMetadata metadata)
+        {
+            return new EventData(
+                Uuid.NewUuid(),
+                "doctor-day-snapshot",
+                Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(snapshot)),
+                Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(metadata)));
+        }
+
         public static SnapshotMetadata DeserializeSnapshotMetadata(this ResolvedEvent resolvedEvent)
         {
             var jsonData = Encoding.UTF8.GetString(resolvedEvent.Event.Metadata.ToArray());

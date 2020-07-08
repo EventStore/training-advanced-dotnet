@@ -8,6 +8,8 @@ namespace Scheduling.Domain.EventSourcing
 
             private Func<object> _snapshotGet;
 
+            public int SnapshotVersion { get; set; }
+
             protected void RegisterSnapshot<T>(Action<T> load, Func<object> get)
             {
                 _snapshotLoad = e => load((T) e);
@@ -18,6 +20,7 @@ namespace Scheduling.Domain.EventSourcing
             {
                 _snapshotLoad(snapshot);
                 Version = version;
+                SnapshotVersion = version;
             }
 
             public object GetSnapshot() =>

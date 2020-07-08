@@ -61,7 +61,7 @@ namespace Scheduling.Domain.Domain.DoctorDay.Events
                 {
                     ["dayId"] = o.DayId,
                     ["slotId"] = o.SlotId,
-                    ["patientId"] = o.Reason
+                    ["reason"] = o.Reason
                 });
 
             Map<SlotScheduleCancelled>($"{prefix}-slot-schedule-cancelled",

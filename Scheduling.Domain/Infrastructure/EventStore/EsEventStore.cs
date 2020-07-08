@@ -107,9 +107,9 @@ namespace Scheduling.Domain.Infrastructure.EventStore
             return (await response.FirstAsync()).Event.EventNumber;
         }
 
-        public Task AppendSnapshot(string streamName, int aggregateVersion, CommandMetadata metadata, object snapshot)
+        public Task AppendSnapshot(string streamName, int aggregateVersion, object snapshot)
         {
-            var snapshotEvent = snapshot.Serialize(Uuid.NewUuid(), metadata);
+            var snapshotEvent = snapshot.SerializeSnapshot(new SnapshotMetadata {Version = aggregateVersion});
 
             return _client.AppendToStreamAsync($"{_tenantPrefix}snapshot-{streamName}", StreamState.Any,
                 new List<EventData> {snapshotEvent});

@@ -3,7 +3,7 @@ using Scheduling.Domain.EventSourcing;
 
 namespace Scheduling.Domain.Domain.DoctorDay.Events
 {
-    public class SlotBookingCancelled : Event<SlotBooked>
+    public class SlotBookingCancelled : Event<SlotBookingCancelled>
     {
         public string DayId { get; }
 

@@ -15,7 +15,7 @@ namespace Scheduling.Domain.EventSourcing
 
         Task<ulong?> GetLastVersion(string streamName);
 
-        Task AppendSnapshot(string streamName, int aggregateVersion, CommandMetadata metadata, object snapshot);
+        Task AppendSnapshot(string streamName, int aggregateVersion, object snapshot);
 
         Task<SnapshotEnvelope> LoadSnapshot(string streamName);
 

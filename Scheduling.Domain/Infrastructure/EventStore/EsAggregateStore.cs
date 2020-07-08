@@ -28,9 +28,12 @@ namespace Scheduling.Domain.Infrastructure.EventStore
             await _store.AppendEvents(streamName, aggregate.Version, metadata, changes);
 
             // Append snapshot
-            if (aggregate.Version % _snapshotThreshold == 0 && aggregate is AggregateRootSnapshot snapshotAggregate)
+            if (aggregate is AggregateRootSnapshot snapshotAggregate)
             {
-                await _store.AppendSnapshot(streamName, aggregate.Version, metadata, snapshotAggregate.GetSnapshot());
+                if ((snapshotAggregate.Version + changes.Length + 1) - snapshotAggregate.SnapshotVersion >= _snapshotThreshold)
+                {
+                    await _store.AppendSnapshot(streamName, aggregate.Version + changes.Length, snapshotAggregate.GetSnapshot());
+                }
             }
 
             aggregate.ClearChanges();
@@ -52,7 +55,7 @@ namespace Scheduling.Domain.Infrastructure.EventStore
             // Load snapshot
             if (aggregate is AggregateRootSnapshot snapshotAggregate)
             {
-                version = await GetSnapshot(streamName, snapshotAggregate);
+                version = await LoadSnapshot(streamName, snapshotAggregate);
             }
 
             var events = await _store.LoadEvents(streamName, version);
@@ -63,7 +66,7 @@ namespace Scheduling.Domain.Infrastructure.EventStore
             return aggregate;
         }
 
-        private async Task<int> GetSnapshot(string streamName, AggregateRootSnapshot snapshotAggregate)
+        private async Task<int> LoadSnapshot(string streamName, AggregateRootSnapshot snapshotAggregate)
         {
             var snapshotEnvelope = await _store.LoadSnapshot(streamName);
 
