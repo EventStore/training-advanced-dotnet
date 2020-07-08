@@ -25,7 +25,6 @@ namespace Scheduling.Domain.DoctorDay
             Register<SlotBooked>(When);
             Register<SlotBookingCancelled>(When);
             Register<SlotScheduleCancelled>(When);
-            Register<DayScheduleCancelled>(When);
             Register<DayScheduleArchived>(When);
             RegisterSnapshot<DaySnapshot>(LoadDaySnapshot, GetDaySnapshot);
         }
@@ -95,31 +94,6 @@ namespace Scheduling.Domain.DoctorDay
                 throw new DayScheduleAlreadyArchivedException();
 
             Raise(new DayScheduleArchived(Id));
-        }
-
-        public void Cancel()
-        {
-            IsCancelledOrArchived();
-            IsNotScheduled();
-
-            foreach (var bookedSlot in _slots.GetBookedSlots())
-            {
-                Raise(new SlotBookingCancelled(Id, bookedSlot.Id, null));
-            }
-
-            var events = _slots
-                .All()
-                .Select(slot => new SlotScheduleCancelled(Id, slot.Id))
-                .ToList();
-
-            events.ForEach(Raise);
-
-            Raise(new DayScheduleCancelled(Id));
-        }
-
-        private void When(DayScheduleCancelled obj)
-        {
-            _isCancelled = true;
         }
 
         private void When(DayScheduled @event)
