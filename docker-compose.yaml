@@ -1,0 +1,18 @@
+version: '3.7'
+
+services:
+  eventstore.db:
+    image: eventstore/eventstore:20.6.0-buster-slim
+    environment:
+      - EVENTSTORE_DEV=true
+      - EVENTSTORE_RUN_PROJECTIONS=all
+      - EVENTSTORE_START_STANDARD_PROJECTIONS=true
+    ports:
+      - "2113:2113"
+  mong.db:
+    image: mongo
+    environment:
+      - MONGO_INITDB_DATABASE=projections
+    ports:
+      - "27017-27019:27017-27019"
+
