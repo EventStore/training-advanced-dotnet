@@ -2,7 +2,7 @@ using Scheduling.Infrastructure.MongoDb;
 
 namespace Scheduling.Domain.Domain.ReadModel
 {
-    public class BookedSlot : Document
+    public class BookedSlot
     {
         public string DayId { get; set; }
 
@@ -11,5 +11,7 @@ namespace Scheduling.Domain.Domain.ReadModel
         public string PatientId { get; set; }
 
         public bool IsBooked { get; set; }
+        
+        public string Id { get; set; }
     }
 }

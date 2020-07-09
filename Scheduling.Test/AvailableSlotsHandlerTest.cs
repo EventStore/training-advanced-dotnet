@@ -1,10 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using MongoDB.Driver;
 using Scheduling.Application;
 using Scheduling.Domain.DoctorDay.Events;
 using Scheduling.Domain.ReadModel;
 using Scheduling.Infrastructure.InMemory;
+using Scheduling.Infrastructure.MongoDb;
 using Scheduling.Test.Test;
 using Xunit;
 using EventHandler = Scheduling.Infrastructure.Projections.EventHandler;
@@ -14,7 +16,7 @@ namespace Scheduling.Test
     [Collection("TypeMapper collection")]
     public class AvailableSlotsHandlerTest : HandlerTest
     {
-        private static InMemoryAvailableSlotsRepository _repository;
+        private static MongoDbAvailableSlotsRepository _repository;
 
         private readonly DateTime _now = DateTime.UtcNow;
 
@@ -22,8 +24,8 @@ namespace Scheduling.Test
 
         protected override EventHandler GetHandler()
         {
-            _repository = new InMemoryAvailableSlotsRepository();
-            _repository.Clear();
+            var mongoClient = new MongoClient("mongodb://localhost");
+            _repository = new MongoDbAvailableSlotsRepository(mongoClient.GetDatabase(Guid.NewGuid().ToString()));
             return new AvailableSlotsProjection(_repository);
         }
 
@@ -40,7 +42,6 @@ namespace Scheduling.Test
                     Duration = scheduled.SlotDuration,
                     Id = scheduled.SlotId.ToString(),
                     DayId = scheduled.DayId,
-                    IsBooked = false,
                     StartTime = scheduled.SlotStartTime.ToString("h:mm tt")
                 }
             }, await _repository.GetAvailableSlotsOn(_now));
@@ -72,7 +73,6 @@ namespace Scheduling.Test
                     Duration = scheduled.SlotDuration,
                     Id = scheduled.SlotId.ToString(),
                     DayId = scheduled.DayId,
-                    IsBooked = false,
                     StartTime = scheduled.SlotStartTime.ToString("h:mm tt")
                 }
             }, await _repository.GetAvailableSlotsOn(_now));

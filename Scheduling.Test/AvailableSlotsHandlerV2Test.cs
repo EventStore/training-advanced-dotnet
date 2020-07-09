@@ -16,7 +16,7 @@ namespace Scheduling.Test
     [Collection("TypeMapper collection")]
     public class AvailableSlotsHandlerV2Test : HandlerTest
     {
-        private static MongoDbAvailableSlotsRepository _repository;
+        private static MongoDbAvailableSlotsRepositoryV2 _repository;
 
         private readonly DateTime _now = DateTime.UtcNow;
 
@@ -24,13 +24,16 @@ namespace Scheduling.Test
 
         public AvailableSlotsHandlerV2Test()
         {
+            // Repeats every event 2x, e.g.: 1 1 2 2 3 3            
             EnableAtLeastOnceMonkey = false;
+            // Repeats all elements except last e.g.: 1 2 3 1 2            
+            EnableAtLeastOnceGorilla = false;
         }
 
         protected override EventHandler GetHandler()
         {
             var mongoClient = new MongoClient("mongodb://localhost");
-            _repository = new MongoDbAvailableSlotsRepository(mongoClient.GetDatabase(Guid.NewGuid().ToString()));
+            _repository = new MongoDbAvailableSlotsRepositoryV2(mongoClient.GetDatabase(Guid.NewGuid().ToString()));
             return new AvailableSlotsProjectionV2(_repository);
         }
 
@@ -46,7 +49,6 @@ namespace Scheduling.Test
                     Duration = scheduled.SlotDuration,
                     Id = scheduled.SlotId.ToString(),
                     DayId = scheduled.DayId,
-                    IsBooked = false,
                     StartTime = scheduled.SlotStartTime.ToString("h:mm tt")
                 }
                 , (await _repository.GetAvailableSlotsOn(_now)).First());
@@ -78,7 +80,6 @@ namespace Scheduling.Test
                     Duration = scheduled.SlotDuration,
                     Id = scheduled.SlotId.ToString(),
                     DayId = scheduled.DayId,
-                    IsBooked = false,
                     StartTime = scheduled.SlotStartTime.ToString("h:mm tt")
                 }
             }, await _repository.GetAvailableSlotsOn(_now));

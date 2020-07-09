@@ -1,15 +1,16 @@
 using Scheduling.Domain.DoctorDay.Events;
 using Scheduling.Domain.ReadModel;
+using Scheduling.Infrastructure.MongoDb;
 using Scheduling.Infrastructure.Projections;
 
 namespace Scheduling.Application
 {
     public class AvailableSlotsProjection : EventHandler
     {
-        public AvailableSlotsProjection(IAvailableSlotsRepository availableSlotsRepository)
+        public AvailableSlotsProjection(MongoDbAvailableSlotsRepository availableSlotsRepository)
         {
             When<SlotScheduled>(e =>
-                availableSlotsRepository.AddSlot(new AvailableSlot
+                availableSlotsRepository.AddSlot(new MongoDbAvailableSlot
                 {
                     Id = e.SlotId.ToString(),
                     DayId = e.DayId,

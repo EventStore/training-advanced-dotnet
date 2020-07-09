@@ -10,6 +10,7 @@ namespace Scheduling.Test.Test
         protected abstract EventHandler GetHandler();
 
         protected bool EnableAtLeastOnceMonkey { get; set; }
+        protected bool EnableAtLeastOnceGorilla { get; set; }
 
         private EventHandler _eventHandler;
 
@@ -24,7 +25,7 @@ namespace Scheduling.Test.Test
                     await _eventHandler.Handle(@event.GetType(), @event);
             }
 
-            if (EnableAtLeastOnceMonkey)
+            if (EnableAtLeastOnceGorilla)
             {
                 foreach (var @event in events.Take(events.Length - 1))
                 {

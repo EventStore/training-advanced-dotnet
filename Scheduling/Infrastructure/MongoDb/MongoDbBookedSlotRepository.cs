@@ -7,21 +7,23 @@ namespace Scheduling.Infrastructure.MongoDb
     public class MongoDbBookedSlotRepository : IBookedSlotsRepository
     {
         private IMongoDatabase _database;
+        private IMongoCollection<BookedSlot> _collection;
 
         public MongoDbBookedSlotRepository(IMongoDatabase database)
         {
             _database = database;
+            _collection = database.GetCollection<BookedSlot>("booked_slot");
         }
 
         public async Task<int> CountByPatientAndMonth(string patientId, int month)
         {
-            var result = await _database.For<BookedSlot>().FindAsync(x => x.PatientId == patientId && x.Month == month);
+            var result = await _collection.FindAsync(x => x.PatientId == patientId && x.Month == month);
             return result.ToList().Count;
         }
 
         public Task AddSlot(BookedSlot slot)
         {
-            return _database.For<BookedSlot>().InsertOneAsync(slot);
+            return _collection.InsertOneAsync(slot);
         }
 
         public Task MarkSlotAsBooked(string slotId, string patientId)
@@ -30,7 +32,7 @@ namespace Scheduling.Infrastructure.MongoDb
             var update = Builders<BookedSlot>.Update
                 .Set(a => a.IsBooked, true)
                 .Set(a => a.PatientId, patientId);
-            return _database.For<BookedSlot>().UpdateOneAsync(filter, update);
+            return _collection.UpdateOneAsync(filter, update);
         }
 
         public Task MarkSlotAsAvailable(string slotId)
@@ -39,12 +41,12 @@ namespace Scheduling.Infrastructure.MongoDb
             var update = Builders<BookedSlot>.Update
                 .Set(a => a.IsBooked, false)
                 .Set(a => a.PatientId, string.Empty);
-            return _database.For<BookedSlot>().UpdateOneAsync(filter, update);
+            return _collection.UpdateOneAsync(filter, update);
         }
 
         public async Task<BookedSlot> GetSlot(string slotId)
         {
-            return (await _database.For<BookedSlot>().FindAsync(x => x.Id == slotId)).FirstOrDefault();
+            return (await _collection.FindAsync(x => x.Id == slotId)).FirstOrDefault();
 
         }
     }
