@@ -52,7 +52,7 @@ namespace Scheduling
                     dayArchiverProcessManager)
             );
 
-            await subManager.Start();
+            Task.Run(() => subManager.Start());
             await commandStore.Start();
 
             CreateHostBuilder(args).Build().Run();

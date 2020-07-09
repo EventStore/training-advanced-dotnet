@@ -37,17 +37,27 @@ namespace Scheduling.Infrastructure.Projections
         {
             var position = await _checkpointStore.GetCheckpoint();
 
-            _subscription = _isAllStream
-                ? (StreamSubscription)
-                await _client.SubscribeToAllAsync(
-                    GetAllStreamPosition(),
-                    EventAppeared,
-                    subscriptionDropped: SubscriptionDropped)
-                : await _client.SubscribeToStreamAsync(
+            if (_isAllStream)
+            {
+                await LoopAllStreamInParallel(GetAllStreamPosition());
+            }
+            else
+            {
+                _subscription = await _client.SubscribeToStreamAsync(
                     _streamName,
                     GetStreamPosition(),
-                    EventAppeared
-                );
+                    EventAppeared);
+            }
+
+
+            // _subscription = _isAllStream
+            //     ? (StreamSubscription)
+            //
+            //     : await _client.SubscribeToStreamAsync(
+            //         _streamName,
+            //         GetStreamPosition(),
+            //         EventAppeared
+            //     );
 
             Position GetAllStreamPosition()
                 => position.HasValue
@@ -56,6 +66,49 @@ namespace Scheduling.Infrastructure.Projections
 
             StreamPosition GetStreamPosition()
                 => position ?? StreamPosition.Start;
+        }
+
+        private async Task LoopAllStreamInParallel(Position position)
+        {
+            var internalPosition = position;
+            while (true)
+            {
+                var result = _client.ReadAllAsync(Direction.Forwards, internalPosition, 1000);
+
+                var events = await result.ToListAsync();
+
+                if (events.Count == 0)
+                {
+                    Thread.Sleep(50);
+                    continue;
+                }
+
+                var groupedByStreamId = events.GroupBy(e => e.OriginalStreamId);
+
+                Parallel.ForEach(groupedByStreamId, async g =>
+                {
+                    foreach (var resolvedEvent in g)
+                    {
+                        await ProcessEvent(resolvedEvent);
+                    }
+                });
+
+                internalPosition = events.Last().OriginalPosition.Value;
+
+                await _checkpointStore.StoreCheckpoint(internalPosition.CommitPosition);
+            }
+        }
+
+        private async Task ProcessEvent(ResolvedEvent resolvedEvent)
+        {
+            if (resolvedEvent.Event.EventType.StartsWith("$") ||
+                resolvedEvent.Event.EventStreamId.Contains("async_command_handler")) return;
+
+            var @event = resolvedEvent.Deserialize();
+
+            await Task.WhenAll(
+                _subscriptions.Select(x => x.Project(@event))
+            );
         }
 
         private void SubscriptionDropped(StreamSubscription _, SubscriptionDroppedReason reason, Exception? c)
