@@ -71,7 +71,7 @@ namespace Scheduling.Test
 
             await When(new BookSlot(_dayId.Value, slotId.Value, "John Doe"));
 
-            Then(e => { Assert.IsType(typeof(SlotBooked), e.First()); });
+            Then(e => { Assert.IsType<SlotBooked>(e.First()); });
         }
 
         [Fact]
@@ -125,7 +125,7 @@ namespace Scheduling.Test
 
             await When(new CancelSlotBooking(_dayId.Value, slotId.Value, "Cancel Reason"));
 
-            Then(e => { Assert.IsType(typeof(SlotBookingCancelled), e.First()); });
+            Then(e => { Assert.IsType<SlotBookingCancelled>(e.First()); });
         }
 
         [Fact]
@@ -150,7 +150,7 @@ namespace Scheduling.Test
 
             await When(new ScheduleSlot(slotId.Value, _doctorId.Value, _date, TimeSpan.FromMinutes(10), _date));
 
-            Then(e => { Assert.IsType(typeof(SlotScheduled), e.First()); });
+            Then(e => { Assert.IsType<SlotScheduled>(e.First()); });
         }
 
         [Fact]
@@ -181,7 +181,7 @@ namespace Scheduling.Test
             await When(new ScheduleSlot(slotTwoId.Value, _doctorId.Value, _date, TimeSpan.FromMinutes(10),
                 _date.AddMinutes(10)));
 
-            Then(e => { Assert.IsType(typeof(SlotScheduled), e.First()); });
+            Then(e => { Assert.IsType<SlotScheduled>(e.First()); });
         }
 
         [Fact]

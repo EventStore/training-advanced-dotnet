@@ -12,9 +12,4 @@
       <PackageReference Include="RavenDB.Client" Version="4.2.103" />
     </ItemGroup>
 
-    <ItemGroup>
-      <ProjectReference Include="..\Scheduling.Domain\Scheduling.Domain.csproj" />
-    </ItemGroup>
-
-
 </Project>
