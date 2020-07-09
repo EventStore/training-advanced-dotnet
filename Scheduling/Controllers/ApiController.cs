@@ -37,9 +37,9 @@ namespace Scheduling.Controllers
             return availableSlots.ToList().Select(a => new AvailableSlotsResponse
             {
                 SlotId = a.Id,
-                Date = a.Date.ToString("M-d-yyy"),
+                Date = a.Date,
                 Duration = a.Duration,
-                Time = a.StartTime.ToString(@"h\:mm tt")
+                Time = a.StartTime
             }).ToList();
         }
 
@@ -52,9 +52,9 @@ namespace Scheduling.Controllers
             {
                 DayId = a.DayId,
                 SlotId = a.Id,
-                Date = a.Date.ToString("M-d-yyy"),
+                Date = a.Date,
                 Duration = a.Duration,
-                Time = a.StartTime.ToString(@"h\:mm tt")
+                Time = a.StartTime
             }).ToList();
         }
 

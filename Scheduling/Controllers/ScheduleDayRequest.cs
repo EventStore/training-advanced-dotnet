@@ -17,13 +17,13 @@ namespace Scheduling.Controllers
             new ScheduleDay(
                 DoctorId,
                 Date.Value,
-                Slots.Select(s => new ScheduledSlot(s.Duration.Value, s.StartTime.Value)).ToList());
+                Slots.Select(s => new ScheduledSlot(s.Duration.Value, Date.Value.Add(TimeSpan.Parse(s.StartTime)))).ToList());
     }
 
     public class SlotRequest
     {
         public TimeSpan? Duration { get; set; }
 
-        public DateTime? StartTime { get; set; }
+        public string StartTime { get; set; }
     }
 }

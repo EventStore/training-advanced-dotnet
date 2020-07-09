@@ -14,10 +14,17 @@ namespace Scheduling.EventSourcing
 
         public static void Map<T>(string name, Func<JObject, object> dataToType, Func<T, JObject> typeToData)
         {
+            if (name == null)
+            {
+                throw new Exception("WTF");
+            }
+
             if (DataToType.ContainsKey(name))
                 return;
 
             DataToType[name] = dataToType;
+
+
             TypeToData[typeof(T)] = o =>
             {
                 var data = typeToData((T) o);

@@ -16,6 +16,7 @@ using EventHandler = Scheduling.Infrastructure.Projections.EventHandler;
 
 namespace Scheduling.Test
 {
+    [Collection("TypeMapper collection")]
     public class DayArchiverProcessManagerTest : HandlerTest
     {
         private readonly DateTime _now = DateTime.UtcNow;
@@ -30,7 +31,6 @@ namespace Scheduling.Test
 
         public DayArchiverProcessManagerTest()
         {
-            EventMappings.MapEventTypes();
             _esStore = new EsEventStore(GetEventStoreClient(), "test");
             _esCommandStore = new EsCommandStore(_esStore, null, null, null);
         }

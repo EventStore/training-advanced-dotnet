@@ -13,13 +13,12 @@ using Xunit;
 
 namespace Scheduling.Test
 {
+    [Collection("TypeMapper collection")]
     public class SnapshotTest
     {
         [Fact]
         public async Task write_snapshot_if_threshold_reached()
         {
-            EventMappings.MapEventTypes();
-
             var now = DateTime.UtcNow;
             var esStore = new EsEventStore(GetEventStoreClient(), "snapshot_test");
             var esAggregateStore = new EsAggregateStore(esStore, 5);
@@ -49,8 +48,6 @@ namespace Scheduling.Test
         [Fact]
         public async Task read_snapshot_when_loading_aggregate()
         {
-            EventMappings.MapEventTypes();
-
             var now = DateTime.UtcNow;
             var esStore = new EsEventStore(GetEventStoreClient(), "snapshot_test");
             var esAggregateStore = new EsAggregateStore(esStore, 5);

@@ -7,9 +7,9 @@ namespace Scheduling.Domain.ReadModel
     {
         public string DayId { get; set; }
 
-        public DateTime Date { get; set; }
+        public string Date { get; set; }
 
-        public DateTime StartTime { get; set; }
+        public string StartTime { get; set; }
 
         public TimeSpan Duration { get; set; }
 

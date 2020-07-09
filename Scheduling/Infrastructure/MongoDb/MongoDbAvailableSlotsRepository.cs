@@ -16,7 +16,7 @@ namespace Scheduling.Infrastructure.MongoDb
         }
         public async Task<List<AvailableSlot>> GetAvailableSlotsOn(DateTime today)
         {
-            var filter = Builders<AvailableSlot>.Filter.Where(x => x.Date == today.Date && x.IsBooked == false);
+            var filter = Builders<AvailableSlot>.Filter.Where(x => x.Date == today.Date.ToString("dd-MM-yyyy") && x.IsBooked == false);
             var availableSlots = await _database.For<AvailableSlot>().FindAsync(filter);
             return availableSlots.ToList();
         }

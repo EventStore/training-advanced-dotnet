@@ -14,8 +14,8 @@ namespace Scheduling.Application
                     Id = e.SlotId.ToString(),
                     DayId = e.DayId,
                     Duration = e.SlotDuration,
-                    Date = e.SlotStartTime.Date,
-                    StartTime = e.SlotStartTime,
+                    Date = e.SlotStartTime.ToString("dd-MM-yyyy"),
+                    StartTime = e.SlotStartTime.ToString("h:mm tt"),
                     IsBooked = false
                 }));
 

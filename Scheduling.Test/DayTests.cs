@@ -12,6 +12,7 @@ using Xunit;
 
 namespace Scheduling.Test
 {
+    [Collection("TypeMapper collection")]
     public class DayTests : AggregateTest<Day, EventStoreDayRepository>
     {
         DoctorId _doctorId;

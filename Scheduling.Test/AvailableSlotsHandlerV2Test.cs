@@ -13,6 +13,7 @@ using EventHandler = Scheduling.Infrastructure.Projections.EventHandler;
 
 namespace Scheduling.Test
 {
+    [Collection("TypeMapper collection")]
     public class AvailableSlotsHandlerV2Test : HandlerTest
     {
         private static MongoDbAvailableSlotsRepository _repository;
@@ -41,12 +42,12 @@ namespace Scheduling.Test
             Then(
                 new AvailableSlot
                 {
-                    Date = scheduled.SlotStartTime.Date,
+                    Date = scheduled.SlotStartTime.Date.ToString("dd-MM-yyyy"),
                     Duration = scheduled.SlotDuration,
                     Id = scheduled.SlotId.ToString(),
                     DayId = scheduled.DayId,
                     IsBooked = false,
-                    StartTime = scheduled.SlotStartTime
+                    StartTime = scheduled.SlotStartTime.ToString("h:mm tt")
                 }
                 , (await _repository.GetAvailableSlotsOn(_now)).First());
         }
@@ -73,12 +74,12 @@ namespace Scheduling.Test
             {
                 new AvailableSlot
                 {
-                    Date = scheduled.SlotStartTime.Date,
+                    Date = scheduled.SlotStartTime.Date.ToString("dd-MM-yyyy"),
                     Duration = scheduled.SlotDuration,
                     Id = scheduled.SlotId.ToString(),
                     DayId = scheduled.DayId,
                     IsBooked = false,
-                    StartTime = scheduled.SlotStartTime
+                    StartTime = scheduled.SlotStartTime.ToString("h:mm tt")
                 }
             }, await _repository.GetAvailableSlotsOn(_now));
         }
