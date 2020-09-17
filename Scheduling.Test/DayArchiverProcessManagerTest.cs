@@ -84,17 +84,9 @@ namespace Scheduling.Test
             {
                 ConnectivitySettings =
                 {
-                    Address = new Uri("https://localhost:2113"),
+                    Address = new Uri("http://localhost:2113"),
                 },
-                DefaultCredentials = new UserCredentials("admin", "changeit"),
-                CreateHttpMessageHandler = () =>
-                    new SocketsHttpHandler
-                    {
-                        SslOptions =
-                        {
-                            RemoteCertificateValidationCallback = delegate { return true; }
-                        }
-                    }
+                DefaultCredentials = new UserCredentials("admin", "changeit")
             });
     }
 }
