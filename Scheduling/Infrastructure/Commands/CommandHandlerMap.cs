@@ -23,7 +23,7 @@ namespace Scheduling.Infrastructure.Commands
         }
 
         public Func<object, CommandMetadata, Task> Get(object command) =>
-            _handlers[command.GetType().Name];
+            _handlers.ContainsKey(command.GetType().Name) ? _handlers[command.GetType().Name] : null;
     }
 
     public class DuplicateCommandHandlerException : Exception
