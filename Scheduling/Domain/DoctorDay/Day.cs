@@ -96,6 +96,11 @@ namespace Scheduling.Domain.DoctorDay
             Raise(new DayScheduleArchived(Id));
         }
 
+        public void Cancel()
+        {
+
+        }
+
         private void When(DayScheduled @event)
         {
             Id = new DayId(new DoctorId(@event.DoctorId), @event.Date).ToString();
