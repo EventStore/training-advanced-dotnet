@@ -2,9 +2,9 @@ version: '3.7'
 
 services:
   eventstore.db:
-    image: eventstore/eventstore:20.6.0-buster-slim
+    image: docker.pkg.github.com/eventstore/eventstore/eventstore:20.6.1-alpha.0.67-buster-slim
     environment:
-      - EVENTSTORE_DEV=true
+      - EVENTSTORE_INSECURE=true
       - EVENTSTORE_RUN_PROJECTIONS=all
       - EVENTSTORE_START_STANDARD_PROJECTIONS=true
     ports:
@@ -15,4 +15,3 @@ services:
       - MONGO_INITDB_DATABASE=projections
     ports:
       - "27017-27019:27017-27019"
-
