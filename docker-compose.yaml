@@ -2,7 +2,7 @@ version: '3.7'
 
 services:
   eventstore.db:
-    image: docker.pkg.github.com/eventstore/eventstore/eventstore:20.6.1-alpha.0.67-buster-slim
+    image: eventstore/eventstore:20.6.1-buster-slim
     environment:
       - EVENTSTORE_INSECURE=true
       - EVENTSTORE_RUN_PROJECTIONS=all
