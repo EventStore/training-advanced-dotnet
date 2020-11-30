@@ -1,34 +1,12 @@
-# Instructions for setting up with the latest version of EventStoreDB.
+# Instructions for setting up project
 
-The exercises in this course are using the latest version of event store that is currently only available from GitHub packages.
-To get access to the EventStoreDB container, you need to get a personal access token from GitHub and use it to register a new container source: 
- * Navigate to GitHub and go to settings -> developer settings -> personal access tokens.
- * Create a new token that has the `read:packages` scope checked.
- * Enter the following command in powershell/bash:
- 
-```
-docker login https://docker.pkg.github.com -u <username> -p <access-token>
-```
+**You'll need to have [.net core 3.1](https://dotnet.microsoft.com/download/dotnet-core/3.1) and [docker](https://www.docker.com/products/docker-desktop
+) installed to be able to run the project and tests.**
 
-To make use of the latest nuget packages you need to add the following Github package source:
-```
-https://nuget.pkg.github.com/eventstore/index.json
-```
+1. Clone this repository
+2. Make sure you are on master branch
+3. Locate and run docker-compose.yml
+4. Open solution in IDE and run all tests
 
-Again you will need to use your username and access token to authorise.
-With Rider and Visual Studio, you can do this via a popup when you build the application. I
-If running from the command line, you should modify your global nuget.config with the following:
+Any problems please contact training@eventstore.com
 
-```
-<?xml version="1.0" encoding="utf-8"?> <configuration>
-<packageSources>
-<add key="github" value="https://nuget.pkg.github.com/eventstore/index.json" />..
-  </packageSources>
-  <packageSourceCredentials>
-<github>
-<add key="Username" value="<username" />
-<add key="ClearTextPassword" value=“<access-token>" />
-    </github>
-  </packageSourceCredentials>
-</configuration>
-```
