@@ -1,7 +1,8 @@
+using System;
 using Scheduling.Domain.DoctorDay.Events;
 using Scheduling.Domain.ReadModel;
 using Scheduling.Infrastructure.MongoDb;
-using Scheduling.Infrastructure.Projections;
+using EventHandler = Scheduling.Infrastructure.Projections.EventHandler;
 
 namespace Scheduling.Application
 {
@@ -9,12 +10,11 @@ namespace Scheduling.Application
     {
         public AvailableSlotsProjectionV2(MongoDbAvailableSlotsRepositoryV2 availableSlotsRepository)
         {
-            When<SlotScheduled>(e => { return null;});
+            When<SlotScheduled>(e => { throw new NotImplementedException(); });
 
-            When<SlotBooked>(e => { return null;});
-            
+            When<SlotBooked>(e => { throw new NotImplementedException(); });
+
             // Add when for SlotBookingCancelled
-            
         }
     }
 }
