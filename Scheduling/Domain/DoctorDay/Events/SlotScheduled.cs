@@ -20,5 +20,24 @@ namespace Scheduling.Domain.DoctorDay.Events
             SlotStartTime = slotStartTime;
             SlotDuration = slotDuration;
         }
+
+        protected bool Equals(SlotScheduled other)
+        {
+            return base.Equals(other) && SlotId.Equals(other.SlotId) && DayId == other.DayId &&
+                   SlotStartTime.Equals(other.SlotStartTime) && SlotDuration.Equals(other.SlotDuration);
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != GetType()) return false;
+            return Equals((SlotScheduled) obj);
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(base.GetHashCode(), SlotId, DayId, SlotStartTime, SlotDuration);
+        }
     }
 }
