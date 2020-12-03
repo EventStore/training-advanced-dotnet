@@ -19,7 +19,7 @@ namespace Scheduling.EventSourcing
 
         Task<SnapshotEnvelope> LoadSnapshot(string streamName);
 
-        Task TruncateStream(string dayId, ulong version);
+        Task TruncateStream(string streamName, ulong version);
 
         Task<IEnumerable<CommandEnvelope>> LoadCommands(string commandStream);
     }
