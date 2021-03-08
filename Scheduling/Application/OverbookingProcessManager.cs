@@ -13,17 +13,17 @@ namespace Scheduling.Domain.Application
         public OverbookingProcessManager(IBookedSlotsRepository bookedSlotRepository, int bookingLimitedPerPatient,
             ICommandStore commandStore, Func<Guid> idGenerator)
         {
-            When<SlotScheduled>(async e =>
+            When<SlotScheduled>(async (e, m) =>
             {
                 
             });
 
-            When<SlotBooked>(async e =>
+            When<SlotBooked>(async (e, m) =>
             {
 
             });
 
-            When<SlotBookingCancelled>(async e =>
+            When<SlotBookingCancelled>(async (e, m) =>
             {
                 
             });
