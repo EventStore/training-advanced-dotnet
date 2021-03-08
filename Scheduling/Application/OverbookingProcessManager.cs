@@ -13,7 +13,7 @@ namespace Scheduling.Domain.Application
         public OverbookingProcessManager(IBookedSlotsRepository bookedSlotRepository, int bookingLimitedPerPatient,
             ICommandStore commandStore, Func<Guid> idGenerator)
         {
-            When<SlotScheduled>(async e =>
+            When<SlotScheduled>(async (e, m) =>
             {
                 await bookedSlotRepository.AddSlot(new BookedSlot
                 {
@@ -23,7 +23,7 @@ namespace Scheduling.Domain.Application
                 });
             });
 
-            When<SlotBooked>(async e =>
+            When<SlotBooked>(async (e, m) =>
             {
                 await bookedSlotRepository.MarkSlotAsBooked(e.SlotId.ToString(), e.PatientId);
 
@@ -37,7 +37,7 @@ namespace Scheduling.Domain.Application
                 }
             });
 
-            When<SlotBookingCancelled>(async e =>
+            When<SlotBookingCancelled>(async (e, m) =>
             {
                 await bookedSlotRepository.MarkSlotAsAvailable(e.SlotId.ToString());
             });

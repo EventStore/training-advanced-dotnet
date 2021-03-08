@@ -29,8 +29,8 @@ namespace Scheduling.Infrastructure.EventStore
                 Serialize(new EventMetadata
                 {
                     ClrType = @event.GetType().FullName,
-                    CausationId = metadata.CausationId.Value.ToString(),
-                    CorrelationId = metadata.CorrelationId.Value.ToString()
+                    CausationId = metadata.CausationId,
+                    CorrelationId = metadata.CorrelationId
                 })
             );
         }
@@ -42,6 +42,12 @@ namespace Scheduling.Infrastructure.EventStore
         {
             var jsonData = Encoding.UTF8.GetString(resolvedEvent.Event.Data.ToArray());
             return JsonConvert.DeserializeObject<T>(jsonData);
+        }
+
+        public static EventMetadata DeserializeMetadata(this ResolvedEvent resolvedEvent)
+        {
+            var jsonData = Encoding.UTF8.GetString(resolvedEvent.Event.Metadata.ToArray());
+            return JsonConvert.DeserializeObject<EventMetadata>(jsonData);
         }
 
         public static EventData SerializeSnapshot(this object snapshot, SnapshotMetadata metadata)

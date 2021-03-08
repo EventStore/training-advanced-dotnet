@@ -9,7 +9,7 @@ namespace Scheduling.Application
     {
         public AvailableSlotsProjectionV2(MongoDbAvailableSlotsRepositoryV2 availableSlotsRepository)
         {
-            When<SlotScheduled>(e =>
+            When<SlotScheduled>((e, m) =>
                 availableSlotsRepository.AddSlot(new MongoDbAvailableSlotV2
                 {
                     Id = e.SlotId.ToString(),
@@ -20,13 +20,13 @@ namespace Scheduling.Application
                     IsBooked = false
                 }));
 
-            When<SlotBooked>(e =>
+            When<SlotBooked>((e, m) =>
                 availableSlotsRepository.HideSlot(e.SlotId));
 
-            When<SlotBookingCancelled>(e =>
+            When<SlotBookingCancelled>((e, m) =>
                 availableSlotsRepository.ShowSlot(e.SlotId));
 
-            When<SlotScheduleCancelled>(e =>
+            When<SlotScheduleCancelled>((e, m) =>
                 availableSlotsRepository.DeleteSlot(e.SlotId));
         }
     }

@@ -4,36 +4,50 @@ using System.Linq;
 
 namespace Scheduling.EventSourcing
 {
-        public abstract class AggregateRoot
+    public abstract class AggregateRoot
+    {
+        readonly Dictionary<Type, Action<object>> _handlers = new Dictionary<Type, Action<object>>();
+
+        readonly List<object> _changes = new List<object>();
+
+        public string Id { get; set; }
+
+        public int Version { get; protected set; } = -1;
+
+        protected void Register<T>(Action<T> when) =>
+            _handlers.Add(typeof(T), e => when((T) e));
+
+        protected void Raise(object e)
         {
-            readonly Dictionary<Type, Action<object>> _handlers = new Dictionary<Type, Action<object>>();
+            _handlers.TryGetValue(e.GetType(), out var handler);
 
-            readonly List<object> _changes = new List<object>();
-
-            public string Id { get; set; }
-
-            public int Version { get; protected set; } = -1;
-
-            protected void Register<T>(Action<T> when) =>
-                _handlers.Add(typeof(T), e => when((T) e));
-
-            protected void Raise(object e)
+            if (handler == null)
             {
-                _handlers[e.GetType()](e);
-                _changes.Add(e);
+                throw new NoHandlerRegisteredException(e.GetType());
             }
 
-            public IEnumerable<object> GetChanges() => _changes.AsEnumerable();
+            handler(e);
+            _changes.Add(e);
+        }
 
-            public void Load(IEnumerable<object> history)
+        public IEnumerable<object> GetChanges() => _changes.AsEnumerable();
+
+        public void Load(IEnumerable<object> history)
+        {
+            foreach (var e in history)
             {
-                foreach (var e in history)
-                {
-                    Raise(e);
-                    Version++;
-                }
+                Raise(e);
+                Version++;
             }
+        }
 
-            public void ClearChanges() => _changes.Clear();
+        public void ClearChanges() => _changes.Clear();
+    }
+
+    public class NoHandlerRegisteredException : Exception
+    {
+        public NoHandlerRegisteredException(Type type) : base($"No handler registered for {type.FullName}")
+        {
         }
     }
+}
