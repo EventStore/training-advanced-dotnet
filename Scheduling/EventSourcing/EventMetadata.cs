@@ -4,8 +4,8 @@ namespace Scheduling.EventSourcing
     {
         public string ClrType { get; set; }
 
-        public string CorrelationId { get; set; }
+        public CorrelationId CorrelationId { get; set; }
 
-        public string CausationId { get; set; }
+        public CausationId CausationId { get; set; }
     }
 }

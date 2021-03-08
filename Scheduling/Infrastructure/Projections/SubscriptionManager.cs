@@ -69,9 +69,10 @@ namespace Scheduling.Infrastructure.Projections
                 resolvedEvent.Event.EventStreamId.Contains("async_command_handler")) return;
 
             var @event = resolvedEvent.Deserialize();
+            var metadata = resolvedEvent.DeserializeMetadata();
 
             await Task.WhenAll(
-                _subscriptions.Select(x => x.Project(@event))
+                _subscriptions.Select(x => x.Project(@event, metadata))
             );
 
             await _checkpointStore.StoreCheckpoint(
