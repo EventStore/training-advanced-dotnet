@@ -1,4 +1,5 @@
 using System.Threading.Tasks;
+using Scheduling.EventSourcing;
 
 namespace Scheduling.Infrastructure.Projections
 {
@@ -13,11 +14,11 @@ namespace Scheduling.Infrastructure.Projections
             _eventHandler = eventHandler;
         }
 
-        public async Task Project(object @event)
+        public async Task Project(object @event, EventMetadata metadata)
         {
             if (!_eventHandler.CanHandle(@event.GetType())) return;
 
-            await _eventHandler.Handle(@event.GetType(), @event);
+            await _eventHandler.Handle(@event.GetType(), @event, metadata);
         }
     }
 }

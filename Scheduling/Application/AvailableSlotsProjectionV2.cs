@@ -10,9 +10,9 @@ namespace Scheduling.Application
     {
         public AvailableSlotsProjectionV2(MongoDbAvailableSlotsRepositoryV2 availableSlotsRepository)
         {
-            When<SlotScheduled>(e => { throw new NotImplementedException(); });
+            When<SlotScheduled>((e, m) => { throw new NotImplementedException(); });
 
-            When<SlotBooked>(e => { throw new NotImplementedException(); });
+            When<SlotBooked>((e, m) => { throw new NotImplementedException(); });
 
             // Add when for SlotBookingCancelled
         }

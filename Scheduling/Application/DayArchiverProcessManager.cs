@@ -26,21 +26,21 @@ namespace Scheduling.Application
             _commandStore = commandStore;
             _idGenerator = idGenerator;
 
-            When<DayScheduled>(async e =>
+            When<DayScheduled>(async (e,m) =>
             {
                 await archivableDaysRepository.Add(new ArchivableDay {Id = e.DayId, Date = e.Date});
             });
 
-            When<CalendarDayStarted>(async e =>
+            When<CalendarDayStarted>(async (e,m) =>
             {
                 var archivableDays = await archivableDaysRepository.FindAll(e.Date.Add(threshold));
                 foreach (var day in archivableDays)
                 {
-                    await SendCommand(day.Id);
+                    await SendCommand(day.Id, m.CorrelationId, m.CausationId);
                 }
             });
 
-            When<DayScheduleArchived>(async e =>
+            When<DayScheduleArchived>(async (e,m) =>
             {
                 var streamName = StreamName.For<Day>(e.DayId);
 
@@ -56,9 +56,9 @@ namespace Scheduling.Application
             });
         }
 
-        private async Task SendCommand(string dayId)
+        private async Task SendCommand(string dayId, CorrelationId correlationId, CausationId causationId)
         {
-            await _commandStore.Send(new ArchiveDaySchedule(dayId), new CommandMetadata(new CorrelationId(_idGenerator()), new CausationId(_idGenerator())));
+            await _commandStore.Send(new ArchiveDaySchedule(dayId), new CommandMetadata(correlationId, causationId));
         }
     }
 }
