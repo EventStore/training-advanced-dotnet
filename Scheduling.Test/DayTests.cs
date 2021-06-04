@@ -65,14 +65,18 @@ namespace Scheduling.Test
         public async Task should_allow_to_book_slot()
         {
             var slotId = new SlotId(Guid.NewGuid());
-
+            var expected = new SlotBooked(_dayId.Value, slotId.Value, "John Doe");
             Given(
                 new DayScheduled(_dayId.Value, _doctorId.Value, _date),
                 new SlotScheduled(slotId.Value, _dayId.Value, _date, TimeSpan.FromMinutes(10)));
 
             await When(new BookSlot(_dayId.Value, slotId.Value, "John Doe"));
 
-            Then(e => { Assert.IsType<SlotBooked>(e.First()); });
+            Then(e =>
+            {
+                Assert.IsType<SlotBooked>(e.First());
+                Assert.Equal(expected, e.First());
+            });
         }
 
         [Fact]
