@@ -33,7 +33,7 @@ namespace Scheduling.Domain.Application
                 if (count > bookingLimitedPerPatient)
                 {
                     await commandStore.Send(new CancelSlotBooking(e.DayId, e.SlotId, "overbooked"),
-                        new CommandMetadata(new CorrelationId(idGenerator()), new CausationId(idGenerator())));
+                        new CommandMetadata(m.CorrelationId, new CausationId(idGenerator())));
                 }
             });
 
