@@ -2,11 +2,11 @@ using System.Threading.Tasks;
 
 namespace Scheduling.Infrastructure.Projections
 {
-    public class DbProjector: ISubscription
+    public class Projector: ISubscription
     {
         readonly EventHandler _eventHandler;
 
-        public DbProjector(
+        public Projector(
             EventHandler eventHandler
         )
         {

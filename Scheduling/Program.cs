@@ -45,10 +45,10 @@ namespace Scheduling
                 new EsCheckpointStore(client, "DaySubscription"),
                 "DaySubscription",
                 StreamName.AllStream,
-                new DbProjector(
+                new Projector(
                     new AvailableSlotsProjection(availableSlotsRepository)
                 ),
-                new DbProjector(
+                new Projector(
                     dayArchiverProcessManager)
             );
 
