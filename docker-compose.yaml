@@ -2,7 +2,7 @@ version: '3.7'
 
 services:
   eventstore.db:
-    image: eventstore/eventstore:20.10.0-buster-slim
+    image: ghcr.io/eventstore/eventstore:20.6.1-alpha.0.69-arm64v8
     environment:
       - EVENTSTORE_INSECURE=true
       - EVENTSTORE_RUN_PROJECTIONS=all
@@ -11,7 +11,7 @@ services:
     ports:
       - "2113:2113"
   mong.db:
-    image: mongo
+    image: arm64v8/mongo
     environment:
       - MONGO_INITDB_DATABASE=projections
     ports:
