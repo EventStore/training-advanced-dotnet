@@ -111,7 +111,7 @@ namespace Scheduling.Controllers
 
             if (!Request.Headers.TryGetValue("X-CausationId", out var causationId))
             {
-                throw new ArgumentNullException("please provide an X-CorrelationId header");
+                throw new ArgumentNullException("please provide an X-CausationId header");
             }
 
             return new CommandMetadata(
