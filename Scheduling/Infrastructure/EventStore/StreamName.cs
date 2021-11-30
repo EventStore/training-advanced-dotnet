@@ -2,10 +2,10 @@ namespace Scheduling.Infrastructure.EventStore
 {
     public class StreamName
     {
-        string Value { get; }
+        private string Value { get; }
         const string AllStreamName = "$all";
 
-        StreamName(string value) => Value = value;
+        private StreamName(string value) => Value = value;
 
         public static StreamName AllStream => new StreamName(AllStreamName);
 

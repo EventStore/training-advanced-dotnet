@@ -21,7 +21,7 @@ namespace Scheduling.Infrastructure.MongoDb
         {
             var filter = Builders<MongoDbAvailableSlotV2>.Filter.Where(x => x.Date == today.Date.ToString("dd-MM-yyyy") && x.IsBooked == false);
             var availableSlots = await _collection.FindAsync(filter);
-            return availableSlots.ToList().Cast<AvailableSlot>().ToList();
+            return availableSlots.ToList().Select(s => s.ToAvailableSlot()).ToList();
         }
 
         public Task AddSlot(MongoDbAvailableSlotV2 availableSlot)

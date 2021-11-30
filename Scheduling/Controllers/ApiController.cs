@@ -106,12 +106,12 @@ namespace Scheduling.Controllers
         {
             if (!Request.Headers.TryGetValue("X-CorrelationId", out var correlationId))
             {
-                throw new ArgumentNullException("please provide an X-CorrelationId header");
+                throw new ArgumentNullException(nameof(correlationId), "please provide an X-CorrelationId header");
             }
 
             if (!Request.Headers.TryGetValue("X-CausationId", out var causationId))
             {
-                throw new ArgumentNullException("please provide an X-CausationId header");
+                throw new ArgumentNullException(nameof(causationId), "please provide an X-CausationId header");
             }
 
             return new CommandMetadata(
