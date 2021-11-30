@@ -28,7 +28,7 @@ namespace Scheduling.Test
 
             Assert.NotNull(slotBookingCancelled);
             Assert.IsType<SlotBookingCancelled>(slotBookingCancelled);
-            Assert.Equal(new SlotBookingCancelled("dayId", slotId, "reason", "unknown request"), slotBookingCancelled);
+            Assert.Equal(new SlotBookingCancelled("dayId", slotId, "reason"), slotBookingCancelled);
         }
 
         [Fact]
@@ -52,7 +52,7 @@ namespace Scheduling.Test
 
             Assert.NotNull(slotBookingCancelled);
             Assert.IsType<SlotBookingCancelled>(slotBookingCancelled);
-            Assert.Equal(new SlotBookingCancelled("dayId", slotId, "reason", "doctor"), slotBookingCancelled);
+            Assert.Equal(new SlotBookingCancelled("dayId", slotId, "reason"), slotBookingCancelled);
         }
     }
 }

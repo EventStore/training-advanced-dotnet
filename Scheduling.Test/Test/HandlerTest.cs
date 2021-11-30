@@ -19,11 +19,17 @@ namespace Scheduling.Test.Test
         {
             _eventHandler = GetHandler();
 
-            var metadata = new EventMetadata
-                {CausationId = new CausationId(Guid.NewGuid()), CorrelationId = new CorrelationId(Guid.NewGuid())};
+            var correlationId = new CorrelationId(Guid.NewGuid());
+            var causationId = new CausationId(Guid.NewGuid());
 
             foreach (var @event in events)
             {
+                var metadata = new EventMetadata(
+                    @event.GetType().FullName,
+                    correlationId,
+                    causationId
+                );
+                
                 await _eventHandler.Handle(@event.GetType(), @event, metadata);
 
                 if (EnableAtLeastOnceMonkey)
@@ -34,6 +40,12 @@ namespace Scheduling.Test.Test
             {
                 foreach (var @event in events.Take(events.Length - 1))
                 {
+                    var metadata = new EventMetadata(
+                        @event.GetType().FullName,
+                        correlationId,
+                        causationId
+                    );
+                    
                     await _eventHandler.Handle(@event.GetType(), @event, metadata);
                 }
             }

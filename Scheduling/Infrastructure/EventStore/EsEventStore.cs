@@ -108,7 +108,7 @@ namespace Scheduling.Infrastructure.EventStore
 
         public Task AppendSnapshot(string streamName, int aggregateVersion, object snapshot)
         {
-            var snapshotEvent = snapshot.SerializeSnapshot(new SnapshotMetadata {Version = aggregateVersion});
+            var snapshotEvent = snapshot.SerializeSnapshot(new SnapshotMetadata(aggregateVersion));
 
             return _client.AppendToStreamAsync($"{_tenantPrefix}snapshot-{streamName}", StreamState.Any,
                 new List<EventData> {snapshotEvent});
@@ -127,11 +127,10 @@ namespace Scheduling.Infrastructure.EventStore
 
             var snapshot = await response.FirstAsync();
 
-            return new SnapshotEnvelope
-            {
-                Snapshot = snapshot.Deserialize(),
-                Metadata = snapshot.DeserializeSnapshotMetadata()
-            };
+            return new SnapshotEnvelope(
+                snapshot.Deserialize(),
+                snapshot.DeserializeSnapshotMetadata()
+            );
         }
 
         public Task TruncateStream(string streamName, ulong beforeVersion)
