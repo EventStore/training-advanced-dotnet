@@ -1,11 +1,8 @@
 namespace Scheduling.EventSourcing
 {
-    public class EventMetadata
-    {
-        public string ClrType { get; set; }
-
-        public string CorrelationId { get; set; }
-
-        public string CausationId { get; set; }
-    }
+    public record EventMetadata(
+        string ClrType,
+        CorrelationId CorrelationId,
+        CausationId CausationId
+    );
 }

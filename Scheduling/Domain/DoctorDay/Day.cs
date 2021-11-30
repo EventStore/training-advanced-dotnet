@@ -111,7 +111,7 @@ namespace Scheduling.Domain.DoctorDay
 
         private void When(DayScheduled @event)
         {
-            Id = new DayId(new DoctorId(@event.DoctorId), @event.Date).ToString();
+            Id = new DayId(new DoctorId(@event.DoctorId), @event.Date).Value;
             _isScheduled = true;
         }
 
@@ -140,21 +140,20 @@ namespace Scheduling.Domain.DoctorDay
         }
 
         private object GetDaySnapshot() =>
-            new DaySnapshot
-            {
-                IsArchived = false,
-                IsCancelled = _isCancelled,
-                Slots = _slots
+            new DaySnapshot(
+                _slots
                     .All()
-                    .Select(s => new SlotSnapshot
-                    {
-                        Booked = s.Booked,
-                        Duration = s.Duration,
-                        Id = s.Id,
-                        StartTime = s.StartTime
-                    }).ToList(),
-                IsScheduled = _isScheduled
-            };
+                    .Select(s => 
+                        new SlotSnapshot(
+                            s.Id,
+                            s.StartTime,
+                            s.Duration,
+                            s.Booked
+                        )
+                    ).ToList(),
+                    _isCancelled,
+                    _isScheduled
+                );
 
         private void LoadDaySnapshot(DaySnapshot daySnapshot)
         {

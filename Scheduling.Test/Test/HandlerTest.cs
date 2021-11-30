@@ -1,7 +1,9 @@
+using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Scheduling.Infrastructure.Projections;
+using Scheduling.EventSourcing;
 using Xunit;
+using EventHandler = Scheduling.Infrastructure.Projections.EventHandler;
 
 namespace Scheduling.Test.Test
 {
@@ -16,6 +18,10 @@ namespace Scheduling.Test.Test
         protected async Task Given(params object[] events)
         {
             _eventHandler = GetHandler();
+
+            var correlationId = new CorrelationId(Guid.NewGuid());
+            var causationId = new CausationId(Guid.NewGuid());
+
             foreach (var @event in events)
             {
                 await _eventHandler.Handle(@event.GetType(), @event);

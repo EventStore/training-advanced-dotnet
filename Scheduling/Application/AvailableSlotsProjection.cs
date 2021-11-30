@@ -9,15 +9,14 @@ namespace Scheduling.Application
         public AvailableSlotsProjection(IAvailableSlotsRepository availableSlotsRepository)
         {
             When<SlotScheduled>(e =>
-                availableSlotsRepository.AddSlot(new AvailableSlot
-                {
-                    Id = e.SlotId.ToString(),
-                    DayId = e.DayId,
-                    Duration = e.SlotDuration,
-                    Date = e.SlotStartTime.Date,
-                    StartTime = e.SlotStartTime,
-                    IsBooked = false
-                }));
+                availableSlotsRepository.AddSlot(new AvailableSlot(
+                    e.SlotId.ToString(),
+                    e.DayId,
+                    e.SlotStartTime.Date,
+                    e.SlotStartTime,
+                    e.SlotDuration,
+                    false
+                )));
 
             When<SlotBooked>(e =>
                 availableSlotsRepository.HideSlot(e.SlotId));

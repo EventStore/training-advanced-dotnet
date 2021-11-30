@@ -3,25 +3,17 @@ using System.Collections.Generic;
 
 namespace Scheduling.Domain.DoctorDay
 {
-    public class DaySnapshot
-    {
-        public List<SlotSnapshot> Slots { get; set; }
+    public record DaySnapshot(
+        List<SlotSnapshot> Slots,
+        bool IsCancelled,
+        bool IsScheduled,
+        bool IsArchived = false
+    );
 
-        public bool IsArchived { get; set; }
-
-        public bool IsCancelled { get; set; }
-
-        public bool IsScheduled { get; set; }
-    }
-
-    public class SlotSnapshot
-    {
-        public Guid Id { get; set; }
-
-        public DateTime StartTime { get; set; }
-
-        public TimeSpan Duration { get; set; }
-
-        public bool Booked { get; set; }
-    }
+    public record SlotSnapshot(
+        Guid Id,
+        DateTime StartTime,
+        TimeSpan Duration,
+        bool Booked
+    );
 }
