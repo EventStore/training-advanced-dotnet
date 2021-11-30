@@ -1,5 +1,3 @@
-using System;
-using System.Net.Http;
 using EventStore.Client;
 using Scheduling.Domain.Service;
 using Scheduling.Infrastructure.Commands;
@@ -12,14 +10,7 @@ namespace Scheduling
         public static string Tenant { get; } = "Scheduling";
 
         public static EventStoreClient GetEventStoreClient() =>
-            new EventStoreClient(new EventStoreClientSettings
-            {
-                ConnectivitySettings =
-                {
-                    Address = new Uri("http://localhost:2113"),
-                },
-                DefaultCredentials = new UserCredentials("admin", "changeit"),
-            });
+            new(EventStoreClientSettings.Create("esdb://localhost:2113?tls=false"));
 
         public static Dispatcher GetDispatcher(EsEventStore esStore)
         {
