@@ -10,15 +10,14 @@ namespace Scheduling.Application
         public AvailableSlotsProjection(MongoDbAvailableSlotsRepository availableSlotsRepository)
         {
             When<SlotScheduled>((e, m) =>
-                availableSlotsRepository.AddSlot(new MongoDbAvailableSlot
-                {
-                    Id = e.SlotId.ToString(),
-                    DayId = e.DayId,
-                    Duration = e.SlotDuration,
-                    Date = e.SlotStartTime.ToString("dd-MM-yyyy"),
-                    StartTime = e.SlotStartTime.ToString("h:mm tt"),
-                    IsBooked = false
-                }));
+                availableSlotsRepository.AddSlot(new MongoDbAvailableSlot(
+                    e.SlotId.ToString(),
+                    e.DayId,
+                    e.SlotStartTime.ToString("dd-MM-yyyy"),
+                    e.SlotStartTime.ToString("h:mm tt"),
+                    e.SlotDuration,
+                    false
+                )));
 
             When<SlotBooked>((e, m) =>
                 availableSlotsRepository.HideSlot(e.SlotId));

@@ -1,20 +1,14 @@
 using System;
-using Scheduling.EventSourcing;
 
 namespace Scheduling.Domain.DoctorDay
 {
-    public class DayId : Value<DayId>
+    public record DayId(
+        string Value
+    )
     {
-        public string Value { get; }
-
-        public DayId(string value)
+        public DayId(DoctorId doctorId, DateTime date) 
+            : this($"{doctorId.Value}_{date.Date:yyyy-MM-dd}")
         {
-            Value = value;
-        }
-
-        public DayId(DoctorId doctorId, DateTime date)
-        {
-            Value = $"{doctorId.Value}_{date.Date:yyyy-MM-dd}";
         }
     }
 }

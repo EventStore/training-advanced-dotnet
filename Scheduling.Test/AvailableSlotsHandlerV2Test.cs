@@ -43,15 +43,13 @@ namespace Scheduling.Test
             var scheduled = new SlotScheduled(Guid.NewGuid(), "dayId", _now, _tenMinutes);
             await Given(scheduled);
             Then(
-                new AvailableSlot
-                {
-                    Date = scheduled.SlotStartTime.Date.ToString("dd-MM-yyyy"),
-                    Duration = scheduled.SlotDuration,
-                    Id = scheduled.SlotId.ToString(),
-                    DayId = scheduled.DayId,
-                    StartTime = scheduled.SlotStartTime.ToString("h:mm tt")
-                }
-                , (await _repository.GetAvailableSlotsOn(_now)).First());
+                new AvailableSlot(
+                    scheduled.SlotId.ToString(),
+                    scheduled.DayId,
+                    scheduled.SlotStartTime.Date.ToString("dd-MM-yyyy"),
+                    scheduled.SlotStartTime.ToString("h:mm tt"),
+                    scheduled.SlotDuration
+                ), (await _repository.GetAvailableSlotsOn(_now)).First());
         }
 
         [Fact]
@@ -74,14 +72,13 @@ namespace Scheduling.Test
                 new SlotBookingCancelled("dayId", scheduled.SlotId, "Reason"));
             Then(new List<AvailableSlot>
             {
-                new AvailableSlot
-                {
-                    Date = scheduled.SlotStartTime.Date.ToString("dd-MM-yyyy"),
-                    Duration = scheduled.SlotDuration,
-                    Id = scheduled.SlotId.ToString(),
-                    DayId = scheduled.DayId,
-                    StartTime = scheduled.SlotStartTime.ToString("h:mm tt")
-                }
+                new AvailableSlot(
+                    scheduled.SlotId.ToString(),
+                    scheduled.DayId,
+                    scheduled.SlotStartTime.Date.ToString("dd-MM-yyyy"),
+                    scheduled.SlotStartTime.ToString("h:mm tt"),
+                    scheduled.SlotDuration
+                )
             }, await _repository.GetAvailableSlotsOn(_now));
         }
 

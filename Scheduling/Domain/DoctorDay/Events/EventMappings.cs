@@ -4,7 +4,7 @@ using static Scheduling.EventSourcing.TypeMapper;
 
 namespace Scheduling.Domain.DoctorDay.Events
 {
-    public class EventMappings
+    public static class EventMappings
     {
         private static string prefix = "doctorday";
 
