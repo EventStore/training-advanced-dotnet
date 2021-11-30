@@ -97,13 +97,6 @@ namespace Scheduling.Test
         }
 
         private static EventStoreClient GetEventStoreClient() =>
-            new EventStoreClient(new EventStoreClientSettings
-            {
-                ConnectivitySettings =
-                {
-                    Address = new Uri("http://localhost:2113"),
-                },
-                DefaultCredentials = new UserCredentials("admin", "changeit")
-            });
+            new(EventStoreClientSettings.Create("esdb://localhost:2113?tls=false"));
     }
 }
