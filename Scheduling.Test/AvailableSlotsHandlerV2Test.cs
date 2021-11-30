@@ -39,17 +39,15 @@ namespace Scheduling.Test
             var scheduled = new SlotScheduled(Guid.NewGuid(), "dayId", _now, _tenMinutes);
             await Given(scheduled);
             Then(
-                new AvailableSlot
-                {
-                    Date = scheduled.SlotStartTime.Date,
-                    Duration = scheduled.SlotDuration,
-                    Id = scheduled.SlotId.ToString(),
-                    DayId = scheduled.DayId,
-                    IsBooked = false,
-                    StartTime = scheduled.SlotStartTime
+                new AvailableSlot(
+                    scheduled.SlotId.ToString(),
+                    scheduled.DayId,
+                    scheduled.SlotStartTime.Date,
+                    scheduled.SlotStartTime,
+                    scheduled.SlotDuration,
+                    false
+                ), (await _repository.GetAvailableSlotsOn(_now)).First());
                 }
-                , (await _repository.GetAvailableSlotsOn(_now)).First());
-        }
 
         [Fact]
         public async Task should_hide_the_slot_from_list_if_booked()
@@ -71,15 +69,14 @@ namespace Scheduling.Test
                 new SlotBookingCancelled("dayId", scheduled.SlotId, "Reason"));
             Then(new List<AvailableSlot>
             {
-                new AvailableSlot
-                {
-                    Date = scheduled.SlotStartTime.Date,
-                    Duration = scheduled.SlotDuration,
-                    Id = scheduled.SlotId.ToString(),
-                    DayId = scheduled.DayId,
-                    IsBooked = false,
-                    StartTime = scheduled.SlotStartTime
-                }
+                new AvailableSlot(
+                    scheduled.SlotId.ToString(),
+                    scheduled.DayId,
+                    scheduled.SlotStartTime.Date,
+                    scheduled.SlotStartTime,
+                    scheduled.SlotDuration,
+                    false
+                )
             }, await _repository.GetAvailableSlotsOn(_now));
         }
 
