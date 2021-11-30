@@ -1,4 +1,6 @@
 using System;
+using System.Threading.Tasks;
+using EventStore.Client;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -24,46 +26,16 @@ var mongoClient = new MongoClient("mongodb://localhost");
 var client = Helpers.GetEventStoreClient();
 var eventStore = new EsEventStore(client, Helpers.Tenant);
 
-services.AddSingleton<IEventStore>(eventStore);
-services.AddSingleton(Helpers.GetDispatcher(eventStore));
-services.AddSingleton(_ => mongoClient.GetDatabase("projections"));
-services.AddSingleton<IAvailableSlotsRepository, MongoDbAvailableSlotsRepository>();
-services.AddSwaggerGen(c =>
-{
-    c.SwaggerDoc("v1", new OpenApiInfo { Title = "Patients API", Description = "API for booking doctor appointments", Version = "v1" });
-});
+services.AddSingleton<IEventStore>(eventStore)
+    .AddSingleton(Helpers.GetDispatcher(eventStore))
+    .AddSingleton(_ => mongoClient.GetDatabase("projections"))
+    .AddSingleton<IAvailableSlotsRepository, MongoDbAvailableSlotsRepository>()
+    .AddSwaggerGen(c =>
+    {
+        c.SwaggerDoc("v1", new OpenApiInfo { Title = "Patients API", Description = "API for booking doctor appointments", Version = "v1" });
+    });
 
 EventMappings.MapEventTypes();
-
-var mongoDatabase = mongoClient.GetDatabase("projections");
-var availableSlotsRepository = new MongoDbAvailableSlotsRepository(mongoDatabase);
-
-var dispatcher = Helpers.GetDispatcher(eventStore);
-
-var commandStore = new EsCommandStore(eventStore, client, dispatcher, Helpers.Tenant);
-
-var dayArchiverProcessManager = new DayArchiverProcessManager(
-    new InMemoryColdStorage(),
-    new MongoDbArchivableDaysRepository(mongoDatabase),
-    commandStore,
-    TimeSpan.FromDays(-180),
-    eventStore,
-    Guid.NewGuid);
-
-var subManager = new SubscriptionManager(
-    client,
-    new EsCheckpointStore(client, "DaySubscription"),
-    "DaySubscription",
-    StreamName.AllStream,
-    new Projector(
-        new AvailableSlotsProjection(availableSlotsRepository)
-    ),
-    new Projector(
-        dayArchiverProcessManager)
-);
-
-await subManager.Start();
-await commandStore.Start();
 
 var app = builder.Build();
 
@@ -72,19 +44,49 @@ if (!app.Environment.IsDevelopment())
     app.UseDeveloperExceptionPage();
 }
 
-app.UseHttpsRedirection();
+app.UseHttpsRedirection()
+    .UseRouting()
+    .UseAuthorization()
+    .UseEndpoints(endpoints => { endpoints.MapControllers(); })
+    .UseSwagger()
+    .UseSwaggerUI(c =>
+    {
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "Patients API");
+    });
 
-app.UseRouting();
-
-app.UseAuthorization();
-
-app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
-
-app.UseSwagger();
-
-app.UseSwaggerUI(c =>
-{
-    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Patients API");
-});
-
+await StartSubscriptionManager(mongoClient, eventStore, client);
 app.Run();
+
+async Task StartSubscriptionManager(MongoClient mongoClient1, EsEventStore esEventStore,
+    EventStoreClient eventStoreClient)
+{
+    var mongoDatabase = mongoClient1.GetDatabase("projections");
+    var availableSlotsRepository = new MongoDbAvailableSlotsRepository(mongoDatabase);
+
+    var dispatcher = Helpers.GetDispatcher(esEventStore);
+
+    var commandStore = new EsCommandStore(esEventStore, eventStoreClient, dispatcher, Helpers.Tenant);
+
+    var dayArchiverProcessManager = new DayArchiverProcessManager(
+        new InMemoryColdStorage(),
+        new MongoDbArchivableDaysRepository(mongoDatabase),
+        commandStore,
+        TimeSpan.FromDays(-180),
+        esEventStore,
+        Guid.NewGuid);
+
+    var subManager = new SubscriptionManager(
+        eventStoreClient,
+        new EsCheckpointStore(eventStoreClient, "DaySubscription"),
+        "DaySubscription",
+        StreamName.AllStream,
+        new Projector(
+            new AvailableSlotsProjection(availableSlotsRepository)
+        ),
+        new Projector(
+            dayArchiverProcessManager)
+    );
+
+    await subManager.Start();
+    await commandStore.Start();
+}
