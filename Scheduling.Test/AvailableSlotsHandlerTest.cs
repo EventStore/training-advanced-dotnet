@@ -36,14 +36,13 @@ namespace Scheduling.Test
             await Given(scheduled);
             Then(new List<AvailableSlot>
             {
-                new AvailableSlot
-                {
-                    Date = scheduled.SlotStartTime.Date.ToString("dd-MM-yyyy"),
-                    Duration = scheduled.SlotDuration,
-                    Id = scheduled.SlotId.ToString(),
-                    DayId = scheduled.DayId,
-                    StartTime = scheduled.SlotStartTime.ToString("h:mm tt")
-                }
+                new AvailableSlot(
+                    scheduled.SlotId.ToString(),
+                    scheduled.DayId,
+                    scheduled.SlotStartTime.Date.ToString("dd-MM-yyyy"),
+                    scheduled.SlotStartTime.ToString("h:mm tt"),
+                    scheduled.SlotDuration
+                )
             }, await _repository.GetAvailableSlotsOn(_now));
         }
 
@@ -67,14 +66,13 @@ namespace Scheduling.Test
                 new SlotBookingCancelled("dayId", scheduled.SlotId, "Reason"));
             Then(new List<AvailableSlot>
             {
-                new AvailableSlot
-                {
-                    Date = scheduled.SlotStartTime.Date.ToString("dd-MM-yyyy"),
-                    Duration = scheduled.SlotDuration,
-                    Id = scheduled.SlotId.ToString(),
-                    DayId = scheduled.DayId,
-                    StartTime = scheduled.SlotStartTime.ToString("h:mm tt")
-                }
+                new AvailableSlot(
+                    scheduled.SlotId.ToString(),
+                    scheduled.DayId,
+                    scheduled.SlotStartTime.Date.ToString("dd-MM-yyyy"),
+                    scheduled.SlotStartTime.ToString("h:mm tt"),
+                    scheduled.SlotDuration
+                )
             }, await _repository.GetAvailableSlotsOn(_now));
         }
 
