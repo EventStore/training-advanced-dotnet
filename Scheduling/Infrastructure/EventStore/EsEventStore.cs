@@ -132,11 +132,10 @@ namespace Scheduling.Infrastructure.EventStore
 
             var snapshot = await response.FirstAsync();
 
-            return new SnapshotEnvelope
-            {
-                Snapshot = snapshot.Deserialize(),
-                Metadata = snapshot.DeserializeSnapshotMetadata()
-            };
+            return new SnapshotEnvelope(
+                snapshot.Deserialize(),
+                snapshot.DeserializeSnapshotMetadata()
+            );
         }
 
         public Task TruncateStream(string streamName, ulong beforeVersion)
