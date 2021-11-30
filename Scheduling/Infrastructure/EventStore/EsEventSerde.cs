@@ -26,12 +26,13 @@ namespace Scheduling.Infrastructure.EventStore
                 uuid,
                 name,
                 data,
-                Serialize(new EventMetadata
-                {
-                    ClrType = @event.GetType().FullName,
-                    CausationId = metadata.CausationId,
-                    CorrelationId = metadata.CorrelationId
-                })
+                Serialize(
+                    new EventMetadata(
+                        @event.GetType().FullName,
+                        metadata.CorrelationId,
+                        metadata.CausationId
+                    )
+                )
             );
         }
 

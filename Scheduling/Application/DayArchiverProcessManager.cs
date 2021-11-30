@@ -28,7 +28,7 @@ namespace Scheduling.Application
 
             When<DayScheduled>(async (e,m) =>
             {
-                await archivableDaysRepository.Add(new ArchivableDay {Id = e.DayId, Date = e.Date});
+                await archivableDaysRepository.Add(new ArchivableDay(e.DayId, e.Date));
             });
 
             When<CalendarDayStarted>(async (e,m) =>

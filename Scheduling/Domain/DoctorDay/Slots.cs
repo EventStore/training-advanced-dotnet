@@ -6,7 +6,7 @@ namespace Scheduling.Domain.DoctorDay
 {
     public class Slots
     {
-        private readonly List<Slot> _slots = new List<Slot>();
+        private readonly List<Slot> _slots = new();
 
         public void Add(Guid slotId, DateTime slotStartTime, TimeSpan slotDuration, bool booked) =>
             _slots.Add(new Slot(slotId, slotStartTime, slotDuration, booked));
