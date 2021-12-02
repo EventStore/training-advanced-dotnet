@@ -6,10 +6,10 @@ using Scheduling.Domain.DoctorDay.Events;
 using Scheduling.Domain.DoctorDay.Exceptions;
 using Scheduling.EventSourcing;
 
-namespace Scheduling.Domain.DoctorDay
+namespace Scheduling.Domain.DoctorDay;
+
+public class Day : AggregateRootSnapshot
 {
-    public class Day : AggregateRootSnapshot
-    {
         private readonly Slots _slots = new Slots();
 
         private bool _isArchived;
@@ -161,5 +161,4 @@ namespace Scheduling.Domain.DoctorDay
             _isCancelled = daySnapshot.IsCancelled;
             _isScheduled = daySnapshot.IsScheduled;
         }
-    }
 }

@@ -8,12 +8,12 @@ using Scheduling.Domain.ReadModel;
 using Scheduling.EventSourcing;
 using Scheduling.Infrastructure.Commands;
 
-namespace Scheduling.Controllers
+namespace Scheduling.Controllers;
+
+[ApiController]
+[Route("api")]
+public class ApiController : ControllerBase
 {
-    [ApiController]
-    [Route("api")]
-    public class ApiController : ControllerBase
-    {
         private readonly Dispatcher _dispatcher;
 
         private readonly IAvailableSlotsRepository _availableSlotsRepository;
@@ -109,5 +109,4 @@ namespace Scheduling.Controllers
                 new CorrelationId(Guid.Parse(correlationId.First())),
                 new CausationId(Guid.Parse(causationId.First())));
         }
-    }
 }

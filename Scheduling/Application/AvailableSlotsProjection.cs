@@ -2,10 +2,10 @@ using Scheduling.Domain.DoctorDay.Events;
 using Scheduling.Domain.ReadModel;
 using Scheduling.Infrastructure.Projections;
 
-namespace Scheduling.Application
+namespace Scheduling.Application;
+
+public class AvailableSlotsProjection : EventHandler
 {
-    public class AvailableSlotsProjection : EventHandler
-    {
         public AvailableSlotsProjection(IAvailableSlotsRepository availableSlotsRepository)
         {
             When<SlotScheduled>((e, m) =>
@@ -27,5 +27,4 @@ namespace Scheduling.Application
             When<SlotScheduleCancelled>((e, m) =>
                 availableSlotsRepository.DeleteSlot(e.SlotId));
         }
-    }
 }

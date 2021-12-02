@@ -4,10 +4,10 @@ using System.Threading.Tasks;
 using MongoDB.Driver;
 using Scheduling.Domain.ReadModel;
 
-namespace Scheduling.Infrastructure.MongoDb
+namespace Scheduling.Infrastructure.MongoDb;
+
+public class MongoDbArchivableDaysRepository : IArchivableDaysRepository
 {
-    public class MongoDbArchivableDaysRepository : IArchivableDaysRepository
-    {
         private readonly IMongoDatabase _database;
 
         public MongoDbArchivableDaysRepository(IMongoDatabase database)
@@ -26,5 +26,4 @@ namespace Scheduling.Infrastructure.MongoDb
             var availableSlots = await _database.For<ArchivableDay>().FindAsync(filter);
             return availableSlots.ToList();
         }
-    }
 }

@@ -2,10 +2,10 @@ using System;
 using System.Collections.Generic;
 using Newtonsoft.Json.Linq;
 
-namespace Scheduling.EventSourcing
+namespace Scheduling.EventSourcing;
+
+public static class TypeMapper
 {
-    public static class TypeMapper
-    {
         static readonly Dictionary<string, Func<JObject, object>> DataToType
             = new Dictionary<string, Func<JObject, object>>();
 
@@ -44,5 +44,4 @@ namespace Scheduling.EventSourcing
 
             return TypeToData[type];
         }
-    }
 }

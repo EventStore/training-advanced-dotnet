@@ -4,10 +4,10 @@ using System.Threading.Tasks;
 using MongoDB.Driver;
 using Scheduling.Domain.ReadModel;
 
-namespace Scheduling.Infrastructure.MongoDb
+namespace Scheduling.Infrastructure.MongoDb;
+
+public class MongoDbAvailableSlotsRepository : IAvailableSlotsRepository
 {
-    public class MongoDbAvailableSlotsRepository : IAvailableSlotsRepository
-    {
         private readonly IMongoDatabase _database;
 
         public MongoDbAvailableSlotsRepository(IMongoDatabase database)
@@ -45,5 +45,4 @@ namespace Scheduling.Infrastructure.MongoDb
             var filter = Builders<AvailableSlot>.Filter.Eq(x => x.Id, slotId.ToString());
             return _database.For<AvailableSlot>().FindOneAndDeleteAsync(filter);
         }
-    }
 }
