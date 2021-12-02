@@ -32,7 +32,7 @@ namespace Scheduling.Test
         {
             EventMappings.MapEventTypes();
             _esStore = new EsEventStore(GetEventStoreClient(), "test");
-            _esCommandStore = new EsCommandStore(_esStore, null, null, null);
+            _esCommandStore = new EsCommandStore(_esStore, null!, null!, null!);
         }
 
         protected override EventHandler GetHandler()

@@ -6,11 +6,11 @@ namespace Scheduling.EventSourcing
 {
     public abstract class AggregateRoot
     {
-        readonly Dictionary<Type, Action<object>> _handlers = new Dictionary<Type, Action<object>>();
+        private readonly Dictionary<Type, Action<object>> _handlers = new();
 
-        readonly List<object> _changes = new List<object>();
+        private readonly List<object> _changes = new();
 
-        public string Id { get; set; }
+        public string Id { get; set; } = default!;
 
         public int Version { get; protected set; } = -1;
 

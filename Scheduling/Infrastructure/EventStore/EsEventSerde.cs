@@ -28,7 +28,7 @@ namespace Scheduling.Infrastructure.EventStore
                 data,
                 Serialize(
                     new EventMetadata(
-                        @event.GetType().FullName,
+                        @event.GetType().FullName!,
                         metadata.CorrelationId,
                         metadata.CausationId
                     )
@@ -42,13 +42,13 @@ namespace Scheduling.Infrastructure.EventStore
         public static T Deserialize<T>(this ResolvedEvent resolvedEvent)
         {
             var jsonData = Encoding.UTF8.GetString(resolvedEvent.Event.Data.ToArray());
-            return JsonConvert.DeserializeObject<T>(jsonData);
+            return JsonConvert.DeserializeObject<T>(jsonData)!;
         }
 
         public static EventMetadata DeserializeMetadata(this ResolvedEvent resolvedEvent)
         {
             var jsonData = Encoding.UTF8.GetString(resolvedEvent.Event.Metadata.ToArray());
-            return JsonConvert.DeserializeObject<EventMetadata>(jsonData);
+            return JsonConvert.DeserializeObject<EventMetadata>(jsonData)!;
         }
 
         public static EventData SerializeSnapshot(this object snapshot, SnapshotMetadata metadata)
@@ -63,17 +63,17 @@ namespace Scheduling.Infrastructure.EventStore
         public static SnapshotMetadata DeserializeSnapshotMetadata(this ResolvedEvent resolvedEvent)
         {
             var jsonData = Encoding.UTF8.GetString(resolvedEvent.Event.Metadata.ToArray());
-            return JsonConvert.DeserializeObject<SnapshotMetadata>(jsonData);
+            return JsonConvert.DeserializeObject<SnapshotMetadata>(jsonData)!;
         }
 
         public static (object command, CommandMetadata metadata) DeserializeCommand(this ResolvedEvent resolvedEvent)
         {
             var command = JsonConvert
                 .DeserializeObject(Encoding.UTF8.GetString(resolvedEvent.Event.Data.ToArray()),
-                    new JsonSerializerSettings {TypeNameHandling = TypeNameHandling.Objects});
+                    new JsonSerializerSettings {TypeNameHandling = TypeNameHandling.Objects})!;
 
             var metadata = JsonConvert
-                .DeserializeObject<CommandMetadata>(Encoding.UTF8.GetString(resolvedEvent.Event.Metadata.ToArray()));
+                .DeserializeObject<CommandMetadata>(Encoding.UTF8.GetString(resolvedEvent.Event.Metadata.ToArray()))!;
 
             return (command, metadata);
         }

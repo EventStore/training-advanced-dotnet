@@ -13,7 +13,7 @@ namespace Scheduling.Test.Test
 
         protected bool EnableAtLeastOnceMonkey { get; set; }
 
-        private EventHandler _eventHandler;
+        private EventHandler _eventHandler = default!;
 
         protected async Task Given(params object[] events)
         {
@@ -25,7 +25,7 @@ namespace Scheduling.Test.Test
             foreach (var @event in events)
             {
                 var metadata = new EventMetadata(
-                    @event.GetType().FullName,
+                    @event.GetType().FullName!,
                     correlationId,
                     causationId
                 );
@@ -41,7 +41,7 @@ namespace Scheduling.Test.Test
                 foreach (var @event in events.Take(events.Length - 1))
                 {
                     var metadata = new EventMetadata(
-                        @event.GetType().FullName,
+                        @event.GetType().FullName!,
                         correlationId,
                         causationId
                     );

@@ -17,7 +17,7 @@ namespace Scheduling.EventSourcing
 
         Task AppendSnapshot(string streamName, int aggregateVersion, object snapshot);
 
-        Task<SnapshotEnvelope> LoadSnapshot(string streamName);
+        Task<SnapshotEnvelope?> LoadSnapshot(string streamName);
 
         Task TruncateStream(string streamName, ulong version);
 

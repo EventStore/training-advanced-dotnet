@@ -21,11 +21,6 @@ namespace Scheduling.Infrastructure.EventStore
 
         public Task AppendCommand(string streamId, object command, CommandMetadata metadata)
         {
-            if (command == null)
-            {
-                return Task.CompletedTask;
-            }
-
             var preparedCommand = command.SerializeCommand(metadata);
 
             return _client.AppendToStreamAsync(_tenantPrefix + streamId, StreamState.Any,
@@ -34,7 +29,7 @@ namespace Scheduling.Infrastructure.EventStore
 
         public Task AppendEvents(string streamName, long version, CommandMetadata metadata, params object[] events)
         {
-            if (events == null || !events.Any())
+            if (!events.Any())
             {
                 return Task.CompletedTask;
             }
@@ -54,7 +49,7 @@ namespace Scheduling.Infrastructure.EventStore
 
         public Task AppendEvents(string streamName, CommandMetadata metadata, params object[] events)
         {
-            if (events == null || !events.Any())
+            if (!events.Any())
             {
                 return Task.CompletedTask;
             }
@@ -119,7 +114,7 @@ namespace Scheduling.Infrastructure.EventStore
             return $"{_tenantPrefix}snapshot-{streamName}";
         }
 
-        public async Task<SnapshotEnvelope> LoadSnapshot(string streamName)
+        public async Task<SnapshotEnvelope?> LoadSnapshot(string streamName)
         {
             var response = _client
                 .ReadStreamAsync(Direction.Backwards, GetSnapshotStreamName(streamName), StreamPosition.End, 1);
