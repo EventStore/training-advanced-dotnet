@@ -40,7 +40,7 @@ namespace Scheduling.Test
                 new CommandMetadata(new CorrelationId(Guid.NewGuid()), new CausationId(Guid.NewGuid())));
 
             var snapshotEnvelope = await esStore.LoadSnapshot(StreamName.For<Day>(aggregate.Id));
-            var snapshot = snapshotEnvelope.Snapshot as DaySnapshot;
+            var snapshot = snapshotEnvelope?.Snapshot as DaySnapshot;
 
             Assert.NotNull(snapshot);
         }

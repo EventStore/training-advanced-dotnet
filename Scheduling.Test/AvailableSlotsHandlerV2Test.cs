@@ -16,11 +16,11 @@ namespace Scheduling.Test
     [Collection("TypeMapper collection")]
     public class AvailableSlotsHandlerV2Test : HandlerTest
     {
-        private static MongoDbAvailableSlotsRepositoryV2 _repository;
+        private static MongoDbAvailableSlotsRepositoryV2 _repository = default!;
 
         private readonly DateTime _now = DateTime.UtcNow;
 
-        private TimeSpan _tenMinutes = TimeSpan.FromMinutes(10);
+        private readonly TimeSpan _tenMinutes = TimeSpan.FromMinutes(10);
 
         public AvailableSlotsHandlerV2Test()
         {

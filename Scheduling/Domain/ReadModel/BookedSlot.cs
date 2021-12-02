@@ -4,7 +4,7 @@ namespace Scheduling.Domain.ReadModel
         string Id,
         string DayId,
         int Month,
-        string PatientId = null,
+        string? PatientId = null,
         bool IsBooked = false
     );
 }

@@ -11,7 +11,7 @@ namespace Scheduling.Domain.DoctorDay.Commands
         List<ScheduledSlot> Slots
     ) : ICommand
     {
-        public virtual bool Equals(ScheduleDay other)
+        public virtual bool Equals(ScheduleDay? other)
         {
             return other is not null
                    && EqualityComparer<Guid>.Default.Equals(DoctorId, other.DoctorId)

@@ -6,6 +6,6 @@ namespace Scheduling.Domain.DoctorDay.Events
     public record SlotBookingCancelled(
         string DayId,
         Guid SlotId,
-        string Reason
+        string? Reason
     ) : IEvent;
 }
