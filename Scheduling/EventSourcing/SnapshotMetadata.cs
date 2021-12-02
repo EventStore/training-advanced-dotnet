@@ -1,6 +1,5 @@
-namespace Scheduling.EventSourcing
-{
-    public record SnapshotMetadata(
-        int Version
-    );
-}
+namespace Scheduling.EventSourcing;
+
+public record SnapshotMetadata(
+    int Version
+);

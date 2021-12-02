@@ -1,8 +1,7 @@
-namespace Scheduling.EventSourcing
-{
-    public record EventMetadata(
-        string ClrType,
-        CorrelationId CorrelationId,
-        CausationId CausationId
-    );
-}
+namespace Scheduling.EventSourcing;
+
+public record EventMetadata(
+    string ClrType,
+    CorrelationId CorrelationId,
+    CausationId CausationId
+);
