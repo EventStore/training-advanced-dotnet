@@ -1,6 +1,7 @@
 using System.Threading.Tasks;
 using MongoDB.Driver;
 using Scheduling.Domain.Domain.ReadModel;
+using Scheduling.Domain.ReadModel;
 
 namespace Scheduling.Infrastructure.MongoDb
 {
