@@ -7,7 +7,7 @@ namespace Scheduling
 {
     public static class Helpers
     {
-        public static string Tenant { get; } = "Scheduling";
+        public static string Tenant => "Scheduling";
 
         public static EventStoreClient GetEventStoreClient() =>
             new(EventStoreClientSettings.Create("esdb://localhost:2113?tls=false"));

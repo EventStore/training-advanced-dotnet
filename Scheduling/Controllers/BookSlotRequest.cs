@@ -3,15 +3,12 @@ using Scheduling.Domain.DoctorDay.Commands;
 
 namespace Scheduling.Controllers
 {
-    public class BookSlotRequest
+    public record BookSlotRequest(
+        Guid SlotId,
+        string PatientId
+    )
     {
-        public Guid SlotId { get; set; }
-
-        public string PatientId { get; set; }
-
-        public BookSlot ToCommand(string dayId)
-        {
-            return new BookSlot(dayId, SlotId, PatientId);
-        }
+        public BookSlot ToCommand(string dayId) =>
+            new BookSlot(dayId, SlotId, PatientId);
     }
 }
