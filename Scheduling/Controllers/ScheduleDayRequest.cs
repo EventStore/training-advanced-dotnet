@@ -3,24 +3,23 @@ using System.Collections.Generic;
 using System.Linq;
 using Scheduling.Domain.DoctorDay.Commands;
 
-namespace Scheduling.Controllers
-{
-    public record ScheduleDayRequest(
-        Guid DoctorId,
-        DateTime Date,
-        List<SlotRequest> Slots
-    )
-    {
-        public ScheduleDay ToCommand() =>
-            new ScheduleDay(
-                DoctorId,
-                Date,
-                Slots.Select(s => new ScheduledSlot(s.Duration, Date.Add(TimeSpan.Parse(s.StartTime)))).ToList()
-            );
-    }
+namespace Scheduling.Controllers;
 
-    public record SlotRequest(
-        TimeSpan Duration,
-        string StartTime
-    );
+public record ScheduleDayRequest(
+    Guid DoctorId,
+    DateTime Date,
+    List<SlotRequest> Slots
+)
+{
+    public ScheduleDay ToCommand() =>
+        new ScheduleDay(
+            DoctorId,
+            Date,
+            Slots.Select(s => new ScheduledSlot(s.Duration, Date.Add(TimeSpan.Parse(s.StartTime)))).ToList()
+        );
 }
+
+public record SlotRequest(
+    TimeSpan Duration,
+    string StartTime
+);

@@ -1,10 +1,9 @@
 using System.Threading.Tasks;
 using Scheduling.EventSourcing;
 
-namespace Scheduling.Infrastructure.Projections
+namespace Scheduling.Infrastructure.Projections;
+
+public interface ISubscription
 {
-    public interface ISubscription
-    {
-        Task Project(object @event, EventMetadata metadata);
-    }
+    Task Project(object @event, EventMetadata metadata);
 }
