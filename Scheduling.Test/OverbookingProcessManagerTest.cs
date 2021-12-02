@@ -32,7 +32,7 @@ namespace Scheduling.Test
         public OverbookingProcessManagerTest()
         {
             _esStore = new EsEventStore(GetEventStoreClient(), "test");
-            _esCommandStore = new EsCommandStore(_esStore, null, null, null);
+            _esCommandStore = new EsCommandStore(_esStore, null!, null!, null!);
 
             var mongoClient = new MongoClient("mongodb://localhost");
             _repository = new MongoDbBookedSlotRepository(mongoClient.GetDatabase(Guid.NewGuid().ToString()));

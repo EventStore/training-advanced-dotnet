@@ -14,7 +14,7 @@ namespace Scheduling.Infrastructure.Projections
         readonly StreamName _streamName;
         readonly EventStoreClient _client;
         readonly ISubscription[] _subscriptions;
-        StreamSubscription _subscription;
+        StreamSubscription? _subscription;
         bool _isAllStream;
 
         public SubscriptionManager(
@@ -37,8 +37,7 @@ namespace Scheduling.Infrastructure.Projections
         {
             var position = await _checkpointStore.GetCheckpoint();
 
-            _subscription = _isAllStream
-                ? (StreamSubscription)
+            _subscription = _isAllStream? 
                 await _client.SubscribeToAllAsync(
                     GetAllStreamPosition(),
                     EventAppeared,
@@ -58,9 +57,9 @@ namespace Scheduling.Infrastructure.Projections
                 => position ?? StreamPosition.Start;
         }
 
-        private void SubscriptionDropped(StreamSubscription _, SubscriptionDroppedReason reason, Exception? c)
+        private static void SubscriptionDropped(StreamSubscription _, SubscriptionDroppedReason reason, Exception? c)
         {
-            Console.WriteLine(c.Message);
+            Console.WriteLine(c?.Message);
         }
 
         async Task EventAppeared(StreamSubscription _, ResolvedEvent resolvedEvent, CancellationToken c)
@@ -78,11 +77,11 @@ namespace Scheduling.Infrastructure.Projections
             await _checkpointStore.StoreCheckpoint(
                 // ReSharper disable once PossibleInvalidOperationException
                 _isAllStream
-                    ? resolvedEvent.OriginalPosition.Value.CommitPosition
+                    ? resolvedEvent.OriginalPosition!.Value.CommitPosition
                     : resolvedEvent.Event.EventNumber.ToUInt64()
             );
         }
 
-        public void Stop() => _subscription.Dispose();
+        public void Stop() => _subscription?.Dispose();
     }
 }
