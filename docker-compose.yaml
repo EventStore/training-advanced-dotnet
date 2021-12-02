@@ -2,7 +2,7 @@ version: '3.7'
 
 services:
   eventstore.db:
-    image: ghcr.io/eventstore/eventstore:20.6.1-alpha.0.69-arm64v8
+    image: ghcr.io/eventstore/eventstore:21.10.0-alpha-arm64v8
     environment:
       - EVENTSTORE_INSECURE=true
       - EVENTSTORE_RUN_PROJECTIONS=all
