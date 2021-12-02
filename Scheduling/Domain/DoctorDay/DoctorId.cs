@@ -1,8 +1,7 @@
 using System;
 
-namespace Scheduling.Domain.DoctorDay
-{
-    public record DoctorId(
-        Guid Value
-    );
-}
+namespace Scheduling.Domain.DoctorDay;
+
+public record DoctorId(
+    Guid Value
+);

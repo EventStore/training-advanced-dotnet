@@ -1,9 +1,8 @@
 using System.Threading.Tasks;
 
-namespace Scheduling.Infrastructure.Projections
+namespace Scheduling.Infrastructure.Projections;
+
+public interface ISubscription
 {
-    public interface ISubscription
-    {
-        Task Project(object @event);
-    }
+    Task Project(object @event);
 }

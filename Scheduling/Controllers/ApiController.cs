@@ -8,106 +8,105 @@ using Scheduling.Domain.ReadModel;
 using Scheduling.EventSourcing;
 using Scheduling.Infrastructure.Commands;
 
-namespace Scheduling.Controllers
+namespace Scheduling.Controllers;
+
+[ApiController]
+[Route("api")]
+public class ApiController : ControllerBase
 {
-    [ApiController]
-    [Route("api")]
-    public class ApiController : ControllerBase
+    private readonly Dispatcher _dispatcher;
+
+    private readonly IAvailableSlotsRepository _availableSlotsRepository;
+
+    private readonly IEventStore _eventStore;
+
+    public ApiController(Dispatcher dispatcher,
+        IAvailableSlotsRepository availableSlotsRepository,
+        IEventStore eventStore)
     {
-        private readonly Dispatcher _dispatcher;
+        _dispatcher = dispatcher;
+        _availableSlotsRepository = availableSlotsRepository;
+        _eventStore = eventStore;
+    }
 
-        private readonly IAvailableSlotsRepository _availableSlotsRepository;
+    [HttpGet]
+    [Route("slots/today/available")]
+    public async Task<List<AvailableSlotsResponse>> GetAvailableSlotsToday()
+    {
+        var availableSlots = await _availableSlotsRepository.GetAvailableSlotsOn(new DateTime(2020, 8, 1));
+        return availableSlots.ToList()
+            .Select(a => new AvailableSlotsResponse(a.DayId, a.Id, a.Date.ToString("M-d-yyy"), a.StartTime.ToString(@"h\:mm tt"), a.Duration))
+            .ToList();
+    }
 
-        private readonly IEventStore _eventStore;
+    [HttpGet]
+    [Route("slots/{date}/available")]
+    public async Task<List<AvailableSlotsResponse>> GetAvailableSlotsToday(string date)
+    {
+        var availableSlots = await _availableSlotsRepository.GetAvailableSlotsOn(DateTime.Parse(date));
+        return availableSlots.ToList()
+            .Select(a => new AvailableSlotsResponse(a.DayId, a.Id, a.Date.ToString("M-d-yyy"), a.StartTime.ToString(@"h\:mm tt"), a.Duration))
+            .ToList();
+    }
 
-        public ApiController(Dispatcher dispatcher,
-            IAvailableSlotsRepository availableSlotsRepository,
-            IEventStore eventStore)
+    [HttpPost]
+    [Route("doctor/schedule")]
+    public async Task<IActionResult> ScheduleDay([FromBody] ScheduleDayRequest scheduleDay)
+    {
+        var command = scheduleDay.ToCommand();
+        var metadata = GetCommandMetadata();
+        await _dispatcher.Dispatch(command, metadata);
+        return Created($"/api/slots/{command.Date}/available", null);
+    }
+
+    [HttpPost]
+    [Route("slots/{dayId}/cancel-booking")]
+    public async Task<IActionResult> CancelBooking(string dayId,
+        [FromBody] CancelSlotBookingRequest cancelSlotBooking)
+    {
+        var command = cancelSlotBooking.ToCommand(dayId);
+        var metadata = GetCommandMetadata();
+        await _dispatcher.Dispatch(command, metadata);
+        return Ok();
+    }
+
+    [HttpPost]
+    [Route("slots/{dayId}/book")]
+    public async Task<IActionResult> BookSlot(string dayId, [FromBody] BookSlotRequest bookSlot)
+    {
+        var command = bookSlot.ToCommand(dayId);
+        var metadata = GetCommandMetadata();
+
+        await _dispatcher.Dispatch(command, metadata);
+
+        return Ok();
+    }
+
+    [HttpPost]
+    [Route("calendar/{date}/day-started")]
+    public async Task<IActionResult> CalendarDayStarted(string date)
+    {
+        var commandMetadata = GetCommandMetadata();
+
+        await _eventStore.AppendEvents("doctorday-time-events", commandMetadata, new CalendarDayStarted(DateTime.Parse(date)));
+
+        return Ok();
+    }
+
+    private CommandMetadata GetCommandMetadata()
+    {
+        if (!Request.Headers.TryGetValue("X-CorrelationId", out var correlationId))
         {
-            _dispatcher = dispatcher;
-            _availableSlotsRepository = availableSlotsRepository;
-            _eventStore = eventStore;
+            throw new ArgumentNullException(nameof(correlationId), "please provide an X-CorrelationId header");
         }
 
-        [HttpGet]
-        [Route("slots/today/available")]
-        public async Task<List<AvailableSlotsResponse>> GetAvailableSlotsToday()
+        if (!Request.Headers.TryGetValue("X-CausationId", out var causationId))
         {
-            var availableSlots = await _availableSlotsRepository.GetAvailableSlotsOn(new DateTime(2020, 8, 1));
-            return availableSlots.ToList()
-                .Select(a => new AvailableSlotsResponse(a.DayId, a.Id, a.Date.ToString("M-d-yyy"), a.StartTime.ToString(@"h\:mm tt"), a.Duration))
-                .ToList();
+            throw new ArgumentNullException(nameof(causationId), "please provide an X-CausationId header");
         }
 
-        [HttpGet]
-        [Route("slots/{date}/available")]
-        public async Task<List<AvailableSlotsResponse>> GetAvailableSlotsToday(string date)
-        {
-            var availableSlots = await _availableSlotsRepository.GetAvailableSlotsOn(DateTime.Parse(date));
-            return availableSlots.ToList()
-                .Select(a => new AvailableSlotsResponse(a.DayId, a.Id, a.Date.ToString("M-d-yyy"), a.StartTime.ToString(@"h\:mm tt"), a.Duration))
-                .ToList();
-        }
-
-        [HttpPost]
-        [Route("doctor/schedule")]
-        public async Task<IActionResult> ScheduleDay([FromBody] ScheduleDayRequest scheduleDay)
-        {
-            var command = scheduleDay.ToCommand();
-            var metadata = GetCommandMetadata();
-            await _dispatcher.Dispatch(command, metadata);
-            return Created($"/api/slots/{command.Date}/available", null);
-        }
-
-        [HttpPost]
-        [Route("slots/{dayId}/cancel-booking")]
-        public async Task<IActionResult> CancelBooking(string dayId,
-            [FromBody] CancelSlotBookingRequest cancelSlotBooking)
-        {
-            var command = cancelSlotBooking.ToCommand(dayId);
-            var metadata = GetCommandMetadata();
-            await _dispatcher.Dispatch(command, metadata);
-            return Ok();
-        }
-
-        [HttpPost]
-        [Route("slots/{dayId}/book")]
-        public async Task<IActionResult> BookSlot(string dayId, [FromBody] BookSlotRequest bookSlot)
-        {
-            var command = bookSlot.ToCommand(dayId);
-            var metadata = GetCommandMetadata();
-
-            await _dispatcher.Dispatch(command, metadata);
-
-            return Ok();
-        }
-
-        [HttpPost]
-        [Route("calendar/{date}/day-started")]
-        public async Task<IActionResult> CalendarDayStarted(string date)
-        {
-            var commandMetadata = GetCommandMetadata();
-
-            await _eventStore.AppendEvents("doctorday-time-events", commandMetadata, new CalendarDayStarted(DateTime.Parse(date)));
-
-            return Ok();
-        }
-
-        private CommandMetadata GetCommandMetadata()
-        {
-            if (!Request.Headers.TryGetValue("X-CorrelationId", out var correlationId))
-            {
-                throw new ArgumentNullException(nameof(correlationId), "please provide an X-CorrelationId header");
-            }
-
-            if (!Request.Headers.TryGetValue("X-CausationId", out var causationId))
-            {
-                throw new ArgumentNullException(nameof(causationId), "please provide an X-CausationId header");
-            }
-
-            return new CommandMetadata(
-                new CorrelationId(Guid.Parse(correlationId.First())),
-                new CausationId(Guid.Parse(causationId.First())));
-        }
+        return new CommandMetadata(
+            new CorrelationId(Guid.Parse(correlationId.First())),
+            new CausationId(Guid.Parse(causationId.First())));
     }
 }

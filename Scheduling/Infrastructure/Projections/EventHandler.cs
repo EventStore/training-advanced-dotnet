@@ -3,37 +3,36 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Scheduling.Infrastructure.Projections
+namespace Scheduling.Infrastructure.Projections;
+
+public class EventHandler
 {
-    public class EventHandler
+    readonly List<EventHandlerEnvelope> _handlers = new();
+
+    protected void When<T>(Func<T, Task> when)
     {
-        readonly List<EventHandlerEnvelope> _handlers = new();
+        _handlers.Add(new EventHandlerEnvelope(typeof(T), async (e) => await when((T)e)));
+    }
 
-        protected void When<T>(Func<T, Task> when)
+    public async Task Handle(Type eventType, object e)
+    {
+        var handlers = _handlers
+            .Where(h => h.EventType == eventType)
+            .ToList();
+
+        foreach (var handler in handlers)
         {
-            _handlers.Add(new EventHandlerEnvelope(typeof(T), async (e) => await when((T)e)));
+            await handler.Handler(e);
         }
+    }
 
-        public async Task Handle(Type eventType, object e)
-        {
-            var handlers = _handlers
-                .Where(h => h.EventType == eventType)
-                .ToList();
+    public bool CanHandle(Type eventType)
+    {
+        return _handlers.Any(h => h.EventType == eventType);
+    }
 
-            foreach (var handler in handlers)
-            {
-                await handler.Handler(e);
-            }
-        }
-
-        public bool CanHandle(Type eventType)
-        {
-            return _handlers.Any(h => h.EventType == eventType);
-        }
-
-        public record EventHandlerEnvelope(
-            Type EventType,
-            Func<object, Task> Handler
-        );
-        }
+    public record EventHandlerEnvelope(
+        Type EventType,
+        Func<object, Task> Handler
+    );
 }

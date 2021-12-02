@@ -4,11 +4,11 @@ using System.Threading;
 using System.Threading.Tasks;
 using MongoDB.Driver;
 
-namespace Scheduling.Infrastructure.MongoDb
+namespace Scheduling.Infrastructure.MongoDb;
+
+public static class MongoDbExtensions
 {
-    public static class MongoDbExtensions
-    {
-        public static IMongoCollection<T> For<T>(this IMongoDatabase database) => database.GetCollection<T>(typeof(T).Name);
+    public static IMongoCollection<T> For<T>(this IMongoDatabase database) => database.GetCollection<T>(typeof(T).Name);
     
     //     public static Task<T> LoadDocument<T>(this IMongoCollection<T> collection, string id, CancellationToken cancellationToken = default)
     //         where T : IDocument
@@ -64,10 +64,9 @@ namespace Scheduling.Infrastructure.MongoDb
     //     
     //     public static Task DeleteDocument<T>(this IMongoDatabase database, string id) where T : IDocument
     //         => database.For<T>().DeleteOneAsync(Builders<T>.Filter.Eq(x => x.Id, id));
-    }
+}
 
-    public interface IDocument
-    {
-        string Id { get; init; }
-    }
+public interface IDocument
+{
+    string Id { get; init; }
 }
