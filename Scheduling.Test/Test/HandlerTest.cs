@@ -11,10 +11,10 @@ namespace Scheduling.Test.Test
     {
         protected abstract EventHandler GetHandler();
 
-        protected bool EnableAtLeastOnceMonkey { get; set; }
-        protected bool EnableAtLeastOnceGorilla { get; set; }
+        protected bool EnableAtLeastOnceMonkey { get; init; }
+        protected bool EnableAtLeastOnceGorilla { get; init; }
 
-        private EventHandler _eventHandler;
+        private EventHandler _eventHandler = default!;
 
         protected async Task Given(params object[] events)
         {
@@ -26,7 +26,7 @@ namespace Scheduling.Test.Test
             foreach (var @event in events)
             {
                 var metadata = new EventMetadata(
-                    @event.GetType().FullName,
+                    @event.GetType().FullName!,
                     correlationId,
                     causationId
                 );
@@ -42,7 +42,7 @@ namespace Scheduling.Test.Test
                 foreach (var @event in events.Take(events.Length - 1))
                 {
                     var metadata = new EventMetadata(
-                        @event.GetType().FullName,
+                        @event.GetType().FullName!,
                         correlationId,
                         causationId
                     );

@@ -46,7 +46,7 @@ namespace Scheduling.Infrastructure.EventStore
                 throw new ArgumentNullException(nameof(aggregateId));
 
             var streamName = GetStreamName<T>(aggregateId);
-            var aggregate = (T) Activator.CreateInstance(typeof(T), true);
+            var aggregate = (T) Activator.CreateInstance(typeof(T), true)!;
 
             aggregate.Id = aggregateId;
 
