@@ -1,7 +1,6 @@
-namespace Scheduling.EventSourcing
-{
-    public interface IEvent
-    {
+namespace Scheduling.EventSourcing;
 
-    }
+public interface IEvent
+{
+
 }
