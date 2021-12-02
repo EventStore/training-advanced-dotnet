@@ -4,17 +4,16 @@ using Scheduling.Domain.ReadModel;
 using Scheduling.Infrastructure.MongoDb;
 using EventHandler = Scheduling.Infrastructure.Projections.EventHandler;
 
-namespace Scheduling.Application
+namespace Scheduling.Application;
+
+public class AvailableSlotsProjectionV2 : EventHandler
 {
-    public class AvailableSlotsProjectionV2 : EventHandler
+    public AvailableSlotsProjectionV2(MongoDbAvailableSlotsRepositoryV2 availableSlotsRepository)
     {
-        public AvailableSlotsProjectionV2(MongoDbAvailableSlotsRepositoryV2 availableSlotsRepository)
-        {
-            When<SlotScheduled>((e, m) => { throw new NotImplementedException(); });
+        When<SlotScheduled>((e, m) => { throw new NotImplementedException(); });
 
-            When<SlotBooked>((e, m) => { throw new NotImplementedException(); });
+        When<SlotBooked>((e, m) => { throw new NotImplementedException(); });
 
-            // Add when for SlotBookingCancelled
-        }
+        // Add when for SlotBookingCancelled
     }
 }

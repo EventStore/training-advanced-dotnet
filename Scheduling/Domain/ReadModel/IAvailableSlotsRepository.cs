@@ -2,10 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Scheduling.Domain.ReadModel
+namespace Scheduling.Domain.ReadModel;
+
+public interface IAvailableSlotsRepository
 {
-    public interface IAvailableSlotsRepository
-    {
-        Task<List<AvailableSlot>> GetAvailableSlotsOn(DateTime today);
-    }
+    Task<List<AvailableSlot>> GetAvailableSlotsOn(DateTime today);
 }

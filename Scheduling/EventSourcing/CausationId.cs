@@ -1,8 +1,7 @@
 using System;
 
-namespace Scheduling.EventSourcing
-{
-    public record CausationId(
-        Guid Value
-    );
-}
+namespace Scheduling.EventSourcing;
+
+public record CausationId(
+    Guid Value
+);

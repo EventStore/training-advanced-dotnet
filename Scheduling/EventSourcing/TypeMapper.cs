@@ -2,54 +2,53 @@ using System;
 using System.Collections.Generic;
 using Newtonsoft.Json.Linq;
 
-namespace Scheduling.EventSourcing
+namespace Scheduling.EventSourcing;
+
+public static class TypeMapper
 {
-    public static class TypeMapper
+    static readonly Dictionary<string, Func<JObject, object>> DataToType
+        = new Dictionary<string, Func<JObject, object>>();
+
+    static readonly Dictionary<Type, Func<object, (string, JObject)>> TypeToData
+        = new Dictionary<Type, Func<object, (string, JObject)>>();
+
+    public static void Map<T>(string name, Func<JObject, object> dataToType, Func<T, JObject> typeToData)
     {
-        static readonly Dictionary<string, Func<JObject, object>> DataToType
-            = new Dictionary<string, Func<JObject, object>>();
-
-        static readonly Dictionary<Type, Func<object, (string, JObject)>> TypeToData
-            = new Dictionary<Type, Func<object, (string, JObject)>>();
-
-        public static void Map<T>(string name, Func<JObject, object> dataToType, Func<T, JObject> typeToData)
+        if (name == null)
         {
-            if (name == null)
-            {
-                throw new Exception("WTF");
-            }
-
-            if (DataToType.ContainsKey(name))
-                return;
-
-            DataToType[name] = dataToType;
-
-
-            TypeToData[typeof(T)] = o =>
-            {
-                var data = typeToData((T) o);
-                return (name, data);
-            };
+            throw new Exception("WTF");
         }
 
-        public static bool TryGetDataToType(string name) => DataToType.TryGetValue(name, out _);
+        if (DataToType.ContainsKey(name))
+            return;
 
-        public static bool TryGetTypeToData(Type type) => TypeToData.TryGetValue(type, out _);
+        DataToType[name] = dataToType;
 
-        public static Func<JObject, object> GetDataToType(string name)
+
+        TypeToData[typeof(T)] = o =>
         {
-            if (!TryGetDataToType(name))
-                throw new Exception($"Failed to find type mapped with '{name}'");
+            var data = typeToData((T) o);
+            return (name, data);
+        };
+    }
 
-            return DataToType[name];
-        }
+    public static bool TryGetDataToType(string name) => DataToType.TryGetValue(name, out _);
 
-        public static Func<object, (string name, JObject data)> GetTypeToData(Type type)
-        {
-            if (!TryGetTypeToData(type))
-                throw new Exception($"Failed to find name mapped with '{type}'");
+    public static bool TryGetTypeToData(Type type) => TypeToData.TryGetValue(type, out _);
 
-            return TypeToData[type];
-        }
+    public static Func<JObject, object> GetDataToType(string name)
+    {
+        if (!TryGetDataToType(name))
+            throw new Exception($"Failed to find type mapped with '{name}'");
+
+        return DataToType[name];
+    }
+
+    public static Func<object, (string name, JObject data)> GetTypeToData(Type type)
+    {
+        if (!TryGetTypeToData(type))
+            throw new Exception($"Failed to find name mapped with '{type}'");
+
+        return TypeToData[type];
     }
 }

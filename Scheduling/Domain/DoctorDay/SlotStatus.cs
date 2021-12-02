@@ -1,9 +1,8 @@
-namespace Scheduling.Domain.DoctorDay
+namespace Scheduling.Domain.DoctorDay;
+
+public enum SlotStatus
 {
-    public enum SlotStatus
-    {
-        Available,
-        Booked,
-        NotScheduled
-    }
+    Available,
+    Booked,
+    NotScheduled
 }
