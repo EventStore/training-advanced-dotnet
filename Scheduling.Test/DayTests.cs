@@ -42,7 +42,7 @@ namespace Scheduling.Test
             Then(events =>
             {
                 var dayScheduled = events.First() as DayScheduled;
-                Assert.Equal(_doctorId.Value, dayScheduled.DoctorId);
+                Assert.Equal(_doctorId.Value, dayScheduled?.DoctorId);
                 Assert.Equal(31, events.Count);
             });
         }

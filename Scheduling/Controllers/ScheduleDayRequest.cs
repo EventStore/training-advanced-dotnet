@@ -7,20 +7,20 @@ namespace Scheduling.Controllers
 {
     public record ScheduleDayRequest(
         Guid DoctorId,
-        DateTime? Date,
+        DateTime Date,
         List<SlotRequest> Slots
     )
     {
         public ScheduleDay ToCommand() =>
             new ScheduleDay(
                 DoctorId,
-                Date.Value,
-                Slots.Select(s => new ScheduledSlot(s.Duration.Value, Date.Value.Add(TimeSpan.Parse(s.StartTime)))).ToList()
+                Date,
+                Slots.Select(s => new ScheduledSlot(s.Duration, Date.Add(TimeSpan.Parse(s.StartTime)))).ToList()
             );
     }
 
     public record SlotRequest(
-        TimeSpan? Duration,
+        TimeSpan Duration,
         string StartTime
     );
 }
