@@ -1,7 +1,6 @@
-namespace Scheduling.EventSourcing
-{
-    public interface ICommand
-    {
+namespace Scheduling.EventSourcing;
 
-    }
+public interface ICommand
+{
+
 }
