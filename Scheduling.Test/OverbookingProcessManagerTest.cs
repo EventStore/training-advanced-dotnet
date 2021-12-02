@@ -4,7 +4,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using EventStore.Client;
 using MongoDB.Driver;
-using Scheduling.Domain.Application;
+using Scheduling.Application;
 using Scheduling.Domain.DoctorDay.Commands;
 using Scheduling.Domain.DoctorDay.Events;
 using Scheduling.Domain.Domain.ReadModel;

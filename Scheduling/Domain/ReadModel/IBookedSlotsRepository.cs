@@ -1,4 +1,5 @@
 using System.Threading.Tasks;
+using Scheduling.Domain.ReadModel;
 
 namespace Scheduling.Domain.Domain.ReadModel
 {
