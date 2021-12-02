@@ -1,17 +1,10 @@
-using Scheduling.Infrastructure.MongoDb;
-
-namespace Scheduling.Domain.Domain.ReadModel
+namespace Scheduling.Domain.ReadModel
 {
-    public class BookedSlot
-    {
-        public string DayId { get; set; }
-
-        public int Month { get; set; }
-
-        public string PatientId { get; set; }
-
-        public bool IsBooked { get; set; }
-        
-        public string Id { get; set; }
-    }
+    public record BookedSlot(
+        string Id,
+        string DayId,
+        int Month,
+        string PatientId = null,
+        bool IsBooked = false
+    );
 }

@@ -34,13 +34,9 @@ namespace Scheduling.Controllers
         public async Task<List<AvailableSlotsResponse>> GetAvailableSlotsToday()
         {
             var availableSlots = await _availableSlotsRepository.GetAvailableSlotsOn(new DateTime(2020, 8, 1));
-            return availableSlots.ToList().Select(a => new AvailableSlotsResponse
-            {
-                SlotId = a.Id,
-                Date = a.Date,
-                Duration = a.Duration,
-                Time = a.StartTime
-            }).ToList();
+            return availableSlots
+                .Select(a => new AvailableSlotsResponse(a.DayId, a.Id, a.Date, a.StartTime, a.Duration))
+                .ToList();
         }
 
         [HttpGet]
@@ -48,14 +44,9 @@ namespace Scheduling.Controllers
         public async Task<List<AvailableSlotsResponse>> GetAvailableSlotsToday(string date)
         {
             var availableSlots = await _availableSlotsRepository.GetAvailableSlotsOn(DateTime.Parse(date));
-            return availableSlots.ToList().Select(a => new AvailableSlotsResponse
-            {
-                DayId = a.DayId,
-                SlotId = a.Id,
-                Date = a.Date,
-                Duration = a.Duration,
-                Time = a.StartTime
-            }).ToList();
+            return availableSlots
+                .Select(a => new AvailableSlotsResponse(a.DayId, a.Id, a.Date, a.StartTime, a.Duration))
+                .ToList();;
         }
 
         [HttpPost]
