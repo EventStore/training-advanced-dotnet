@@ -13,7 +13,7 @@ namespace Scheduling.Test.Test
 
         protected bool EnableAtLeastOnceMonkey { get; set; }
 
-        private EventHandler _eventHandler;
+        private EventHandler _eventHandler = default!;
 
         protected async Task Given(params object[] events)
         {

@@ -7,11 +7,11 @@ namespace Scheduling.Infrastructure.Projections
 {
     public class EventHandler
     {
-        readonly List<EventHandlerEnvelope> _handlers = new List<EventHandlerEnvelope>();
+        readonly List<EventHandlerEnvelope> _handlers = new();
 
         protected void When<T>(Func<T, Task> when)
         {
-            _handlers.Add(new EventHandlerEnvelope { EventType = typeof(T), Handler = async e => await when((T)e) });
+            _handlers.Add(new EventHandlerEnvelope(typeof(T), async (e) => await when((T)e)));
         }
 
         public async Task Handle(Type eventType, object e)
@@ -31,11 +31,9 @@ namespace Scheduling.Infrastructure.Projections
             return _handlers.Any(h => h.EventType == eventType);
         }
 
-        public class EventHandlerEnvelope
-        {
-            public Type EventType { get; set; }
-
-            public Func<object, Task> Handler { get; set; }
+        public record EventHandlerEnvelope(
+            Type EventType,
+            Func<object, Task> Handler
+        );
         }
-    }
 }
