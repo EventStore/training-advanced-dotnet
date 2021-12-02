@@ -15,11 +15,11 @@ namespace Scheduling.Test
 {
     public class AvailableSlotsHandlerV2Test : HandlerTest
     {
-        private static MongoDbAvailableSlotsRepository _repository;
+        private static MongoDbAvailableSlotsRepository _repository = default!;
 
         private readonly DateTime _now = DateTime.UtcNow;
 
-        private TimeSpan _tenMinutes = TimeSpan.FromMinutes(10);
+        private readonly TimeSpan _tenMinutes = TimeSpan.FromMinutes(10);
 
         public AvailableSlotsHandlerV2Test()
         {

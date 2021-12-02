@@ -13,11 +13,11 @@ namespace Scheduling.Test
 {
     public class AvailableSlotsHandlerTest : HandlerTest
     {
-        private static InMemoryAvailableSlotsRepository _repository;
+        private static InMemoryAvailableSlotsRepository _repository = default!;
 
         private readonly DateTime _now = DateTime.UtcNow;
 
-        private TimeSpan _tenMinutes = TimeSpan.FromMinutes(10);
+        private readonly TimeSpan _tenMinutes = TimeSpan.FromMinutes(10);
 
         protected override EventHandler GetHandler()
         {

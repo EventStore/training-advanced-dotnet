@@ -10,25 +10,25 @@ namespace Scheduling.Test.Test
 {
     public abstract class AggregateTest<TAggregate, TRepository> where TAggregate : AggregateRoot
     {
-        private Dispatcher _dispatcher;
+        private Dispatcher _dispatcher = default!;
 
-        private TRepository _repository;
+        private readonly TRepository _repository;
 
-        private AggregateRoot _aggregate;
+        private readonly AggregateRoot _aggregate;
 
-        private Exception _exception;
+        private Exception? _exception;
 
         protected AggregateTest()
         {
-            _aggregate = (AggregateRoot) Activator.CreateInstance(typeof(TAggregate));
-            _repository = (TRepository) Activator.CreateInstance(typeof(TRepository), new FakeAggregateStore(_aggregate));
+            _aggregate = (AggregateRoot) Activator.CreateInstance(typeof(TAggregate))!;
+            _repository = (TRepository) Activator.CreateInstance(typeof(TRepository), new FakeAggregateStore(_aggregate))!;
         }
 
         protected void RegisterHandlers<TCommandHandler>()
             where TCommandHandler : CommandHandler
         {
 
-            var commandHandlerMap = new CommandHandlerMap((CommandHandler) Activator.CreateInstance(typeof(TCommandHandler), _repository));
+            var commandHandlerMap = new CommandHandlerMap((CommandHandler) Activator.CreateInstance(typeof(TCommandHandler), _repository)!);
             _dispatcher = new Dispatcher(commandHandlerMap);
         }
 
@@ -61,7 +61,7 @@ namespace Scheduling.Test.Test
 
         protected void Then<TException>() where TException : Exception
         {
-           Assert.Equal(typeof(TException), _exception.GetType());
+           Assert.Equal(typeof(TException), _exception!.GetType());
         }
     }
 }

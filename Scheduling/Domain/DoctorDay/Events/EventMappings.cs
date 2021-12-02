@@ -6,14 +6,14 @@ namespace Scheduling.Domain.DoctorDay.Events
 {
     public static class EventMappings
     {
-        private static string prefix = "doctorday";
+        private const string Prefix = "doctorday";
 
         public static void MapEventTypes()
         {
-            Map<DayScheduled>($"{prefix}-day-scheduled",
+            Map<DayScheduled>($"{Prefix}-day-scheduled",
                 d => new DayScheduled(
-                    d["dayId"].ToString(),
-                    Guid.Parse(d["doctorId"].ToString()),
+                    d["dayId"]!.ToString(),
+                    Guid.Parse(d["doctorId"]!.ToString()),
                     Convert.ToDateTime(d["date"])
                 ),
                 o => new JObject
@@ -24,12 +24,12 @@ namespace Scheduling.Domain.DoctorDay.Events
                 }
             );
 
-            Map<SlotScheduled>($"{prefix}-slot-scheduled",
+            Map<SlotScheduled>($"{Prefix}-slot-scheduled",
                 d => new SlotScheduled(
-                    Guid.Parse(d["slotId"].ToString()),
-                    d["dayId"].ToString(),
+                    Guid.Parse(d["slotId"]!.ToString()),
+                    d["dayId"]!.ToString(),
                     Convert.ToDateTime(d["slotStartTime"]),
-                    TimeSpan.Parse(d["slotDuration"].ToString())
+                    TimeSpan.Parse(d["slotDuration"]!.ToString())
                 ),
                 o => new JObject
                 {
@@ -39,11 +39,11 @@ namespace Scheduling.Domain.DoctorDay.Events
                     ["slotDuration"] = o.SlotDuration
                 });
 
-            Map<SlotBooked>($"{prefix}-slot-booked",
+            Map<SlotBooked>($"{Prefix}-slot-booked",
                 d => new SlotBooked(
-                    d["dayId"].ToString(),
-                    Guid.Parse(d["slotId"].ToString()),
-                    d["patientId"].ToString()
+                    d["dayId"]!.ToString(),
+                    Guid.Parse(d["slotId"]!.ToString()),
+                    d["patientId"]!.ToString()
                 ),
                 o => new JObject
                 {
@@ -52,11 +52,11 @@ namespace Scheduling.Domain.DoctorDay.Events
                     ["patientId"] = o.PatientId
                 });
 
-            Map<SlotBookingCancelled>($"{prefix}-slot-booking-cancelled",
+            Map<SlotBookingCancelled>($"{Prefix}-slot-booking-cancelled",
                 d => new SlotBookingCancelled(
-                    d["dayId"].ToString(),
-                    Guid.Parse(d["slotId"].ToString()),
-                    d["reason"].ToString()
+                    d["dayId"]!.ToString(),
+                    Guid.Parse(d["slotId"]!.ToString()),
+                    d["reason"]!.ToString()
                 ), o => new JObject
                 {
                     ["dayId"] = o.DayId,
@@ -64,40 +64,40 @@ namespace Scheduling.Domain.DoctorDay.Events
                     ["reason"] = o.Reason
                 });
 
-            Map<SlotScheduleCancelled>($"{prefix}-slot-schedule-cancelled",
+            Map<SlotScheduleCancelled>($"{Prefix}-slot-schedule-cancelled",
                 d => new SlotScheduleCancelled(
-                    d["dayId"].ToString(),
-                    Guid.Parse(d["slotId"].ToString())),
+                    d["dayId"]!.ToString(),
+                    Guid.Parse(d["slotId"]!.ToString())),
                 o => new JObject
                 {
                     ["dayId"] = o.DayId,
                     ["slotId"] = o.SlotId
                 });
 
-            Map<DayScheduleCancelled>($"{prefix}-day-schedule-cancelled",
+            Map<DayScheduleCancelled>($"{Prefix}-day-schedule-cancelled",
                 d => new DayScheduleCancelled(
-                    d["dayId"].ToString()),
+                    d["dayId"]!.ToString()),
                 o => new JObject
                 {
                     ["dayId"] = o.DayId
                 });
 
-            Map<DayScheduleArchived>($"{prefix}-day-schedule-archived",
-                d => new DayScheduleArchived(d["dayId"].ToString()),
+            Map<DayScheduleArchived>($"{Prefix}-day-schedule-archived",
+                d => new DayScheduleArchived(d["dayId"]!.ToString()),
                 o => new JObject
                 {
                     ["dayId"] = o.DayId
                 });
 
-            Map<CalendarDayStarted>($"{prefix}-calendar-day-started",
-                d => new CalendarDayStarted(DateTime.Parse(d["date"].ToString())),
+            Map<CalendarDayStarted>($"{Prefix}-calendar-day-started",
+                d => new CalendarDayStarted(DateTime.Parse(d["date"]!.ToString())),
                 o => new JObject
                 {
                     ["date"] = o.Date
                 });
 
             Map<DaySnapshot>("doctor-day-snapshot",
-                d => d.ToObject<DaySnapshot>(),
+                d => d.ToObject<DaySnapshot>()!,
                 JObject.FromObject
             );
         }
