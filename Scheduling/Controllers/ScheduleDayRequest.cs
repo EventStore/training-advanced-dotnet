@@ -5,14 +5,12 @@ using Scheduling.Domain.DoctorDay.Commands;
 
 namespace Scheduling.Controllers
 {
-    public class ScheduleDayRequest
+    public record ScheduleDayRequest(
+        Guid DoctorId,
+        DateTime? Date,
+        List<SlotRequest> Slots
+    )
     {
-        public Guid DoctorId { get; set; }
-
-        public DateTime? Date { get; set; }
-
-        public List<SlotRequest> Slots { get; set; }
-
         public ScheduleDay ToCommand() =>
             new ScheduleDay(
                 DoctorId,
@@ -20,10 +18,8 @@ namespace Scheduling.Controllers
                 Slots.Select(s => new ScheduledSlot(s.Duration.Value, s.StartTime.Value)).ToList());
     }
 
-    public class SlotRequest
-    {
-        public TimeSpan? Duration { get; set; }
-
-        public DateTime? StartTime { get; set; }
-    }
+    public record SlotRequest(
+        TimeSpan? Duration,
+        DateTime? StartTime
+    );
 }
