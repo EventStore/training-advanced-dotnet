@@ -1,7 +1,6 @@
 # Instructions for setting up project
 
-**You'll need to have [.net core 3.1](https://dotnet.microsoft.com/download/dotnet-core/3.1) and [docker](https://www.docker.com/products/docker-desktop
-) installed to be able to run the project and tests.**
+**You'll need to have [.NET 6](https://dotnet.microsoft.com/download/dotnet/6.0) and [docker](https://www.docker.com/products/docker-desktop) installed to be able to run the project and tests.**
 
 1. Clone this repository
 2. Make sure you are on master branch
