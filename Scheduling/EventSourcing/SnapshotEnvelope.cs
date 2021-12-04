@@ -1,9 +1,6 @@
-namespace Scheduling.EventSourcing
-{
-    public class SnapshotEnvelope
-    {
-        public object Snapshot { get; set; }
+namespace Scheduling.EventSourcing;
 
-        public SnapshotMetadata Metadata { get; set; }
-    }
-}
+public record SnapshotEnvelope(
+    object Snapshot,
+    SnapshotMetadata Metadata
+);
