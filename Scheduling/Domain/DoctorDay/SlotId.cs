@@ -1,15 +1,8 @@
 using System;
 using Scheduling.EventSourcing;
 
-namespace Scheduling.Domain.DoctorDay
-{
-    public class SlotId : Value<SlotId>
-    {
-        public Guid Value { get; }
+namespace Scheduling.Domain.DoctorDay;
 
-        public SlotId(Guid value)
-        {
-            Value = value;
-        }
-    }
-}
+public record SlotId(
+    Guid Value
+);

@@ -1,12 +1,7 @@
 using System;
 
-namespace Scheduling.EventSourcing
-{
-    public class CausationId : Value<CausationId>
-    {
-        public Guid Value { get; }
+namespace Scheduling.EventSourcing;
 
-        public CausationId(Guid value) =>
-            Value = value;
-    }
-}
+public record CausationId(
+    Guid Value
+);
