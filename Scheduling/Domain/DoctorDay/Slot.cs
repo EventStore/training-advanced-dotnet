@@ -1,43 +1,42 @@
 using System;
 
-namespace Scheduling.Domain.DoctorDay
+namespace Scheduling.Domain.DoctorDay;
+
+public class Slot
 {
-    public class Slot
+    public Guid Id { get; }
+
+    public DateTime StartTime { get; }
+
+    public TimeSpan Duration { get; }
+
+    public bool Booked { get; private set; }
+
+    public Slot(Guid id, in DateTime startTime, in TimeSpan duration, bool booked)
     {
-        public Guid Id { get; }
+        Id = id;
+        StartTime = startTime;
+        Duration = duration;
+        Booked = booked;
+    }
 
-        public DateTime StartTime { get; }
+    public void Book()
+    {
+        Booked = true;
+    }
 
-        public TimeSpan Duration { get; }
+    public void Cancel()
+    {
+        Booked = false;
+    }
 
-        public bool Booked { get; private set; }
+    public bool OverlapsWith(in DateTime slotStartTime, in TimeSpan slotDuration)
+    {
+        var thisStart = StartTime;
+        var thisEnd = StartTime.Add(Duration);
+        var proposedStart = slotStartTime;
+        var proposedEnd = slotStartTime.Add(slotDuration);
 
-        public Slot(Guid id, in DateTime startTime, in TimeSpan duration, bool booked)
-        {
-            Id = id;
-            StartTime = startTime;
-            Duration = duration;
-            Booked = booked;
-        }
-
-        public void Book()
-        {
-            Booked = true;
-        }
-
-        public void Cancel()
-        {
-            Booked = false;
-        }
-
-        public bool OverlapsWith(in DateTime slotStartTime, in TimeSpan slotDuration)
-        {
-            var thisStart = StartTime;
-            var thisEnd = StartTime.Add(Duration);
-            var proposedStart = slotStartTime;
-            var proposedEnd = slotStartTime.Add(slotDuration);
-
-            return thisStart < proposedEnd && thisEnd > proposedStart;
-        }
+        return thisStart < proposedEnd && thisEnd > proposedStart;
     }
 }

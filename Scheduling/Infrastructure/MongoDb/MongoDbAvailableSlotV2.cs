@@ -1,28 +1,19 @@
 using System;
 using Scheduling.Domain.ReadModel;
 
-namespace Scheduling.Infrastructure.MongoDb
+namespace Scheduling.Infrastructure.MongoDb;
+
+public record MongoDbAvailableSlotV2(
+    string Id,
+    string DayId,
+    string Date,
+    string StartTime,
+    TimeSpan Duration,
+    bool IsBooked
+)
 {
-    public class MongoDbAvailableSlotV2 : AvailableSlot
+    public AvailableSlot ToAvailableSlot()
     {
-        public bool IsBooked { get; set; }
-        
-        protected bool Equals(MongoDbAvailableSlot other)
-        {
-            return DayId == other.DayId && Date.Equals(other.Date) && StartTime.ToString().Equals(other.StartTime.ToString()) && Duration.Equals(other.Duration) && IsBooked == other.IsBooked;
-        }
-
-        public override bool Equals(object obj)
-        {
-            if (ReferenceEquals(null, obj)) return false;
-            if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != this.GetType()) return false;
-            return Equals((MongoDbAvailableSlot) obj);
-        }
-
-        public override int GetHashCode()
-        {
-            return HashCode.Combine(DayId, Date, StartTime, Duration, IsBooked);
-        }
+        return new AvailableSlot(Id, DayId, Date, StartTime, Duration);
     }
 }
