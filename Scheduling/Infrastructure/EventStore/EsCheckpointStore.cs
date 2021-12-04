@@ -6,66 +6,65 @@ using EventStore.Client;
 using Newtonsoft.Json;
 using Scheduling.Infrastructure.Projections;
 
-namespace Scheduling.Infrastructure.EventStore
+namespace Scheduling.Infrastructure.EventStore;
+
+public class EsCheckpointStore : ICheckpointStore
 {
-    public class EsCheckpointStore : ICheckpointStore
+    const string CheckpointStreamPrefix = "checkpoint";
+    readonly EventStoreClient _client;
+    readonly string _streamName;
+
+    public EsCheckpointStore(
+        EventStoreClient client,
+        string subscriptionName)
     {
-        const string CheckpointStreamPrefix = "checkpoint";
-        readonly EventStoreClient _client;
-        readonly string _streamName;
+        _client = client;
+        _streamName = CheckpointStreamPrefix + subscriptionName;
+    }
 
-        public EsCheckpointStore(
-            EventStoreClient client,
-            string subscriptionName)
+    public async Task<ulong?> GetCheckpoint()
+    {
+        var result = _client
+            .ReadStreamAsync(Direction.Backwards, _streamName, StreamPosition.End, 1);
+
+        if (await result.ReadState == ReadState.StreamNotFound)
         {
-            _client = client;
-            _streamName = CheckpointStreamPrefix + subscriptionName;
+            return null;
         }
 
-        public async Task<ulong?> GetCheckpoint()
+        var eventData = await result.FirstAsync();
+
+        if (eventData.Equals(default(ResolvedEvent)))
         {
-            var result = _client
-                .ReadStreamAsync(Direction.Backwards, _streamName, StreamPosition.End, 1);
-
-            if (await result.ReadState == ReadState.StreamNotFound)
-            {
-                return null;
-            }
-
-            var eventData = await result.FirstAsync();
-
-            if (eventData.Equals(default(ResolvedEvent)))
-            {
-                await StoreCheckpoint(Position.Start.CommitPosition);
-                return null;
-            }
-
-            return eventData.Deserialize<Checkpoint>()?.Position;
+            await StoreCheckpoint(Position.Start.CommitPosition);
+            return null;
         }
 
-        public Task StoreCheckpoint(ulong? checkpoint)
-        {
-            var @event = new Checkpoint {Position = checkpoint};
+        return eventData.Deserialize<Checkpoint>()?.Position;
+    }
 
-            var preparedEvent =
-                new EventData(
-                    Uuid.NewUuid(),
-                    "$checkpoint",
-                    Encoding.UTF8.GetBytes(
-                        JsonConvert.SerializeObject(@event)
-                    )
-                );
+    public Task StoreCheckpoint(ulong? checkpoint)
+    {
+        var @event = new Checkpoint {Position = checkpoint};
 
-            return _client.AppendToStreamAsync(
-                _streamName,
-                StreamState.Any,
-                new List<EventData> {preparedEvent}
+        var preparedEvent =
+            new EventData(
+                Uuid.NewUuid(),
+                "$checkpoint",
+                Encoding.UTF8.GetBytes(
+                    JsonConvert.SerializeObject(@event)
+                )
             );
-        }
 
-        class Checkpoint
-        {
-            public ulong? Position { get; set; }
-        }
+        return _client.AppendToStreamAsync(
+            _streamName,
+            StreamState.Any,
+            new List<EventData> {preparedEvent}
+        );
+    }
+
+    class Checkpoint
+    {
+        public ulong? Position { get; set; }
     }
 }

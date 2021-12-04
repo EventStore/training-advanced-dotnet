@@ -6,62 +6,61 @@ using Scheduling.EventSourcing;
 using Scheduling.Infrastructure.Commands;
 using Xunit;
 
-namespace Scheduling.Test.Test
+namespace Scheduling.Test.Test;
+
+public abstract class AggregateTest<TAggregate, TRepository> where TAggregate : AggregateRoot
 {
-    public abstract class AggregateTest<TAggregate, TRepository> where TAggregate : AggregateRoot
+    private Dispatcher _dispatcher = default!;
+
+    private readonly TRepository _repository;
+
+    private readonly AggregateRoot _aggregate;
+
+    private Exception? _exception;
+
+    protected AggregateTest()
     {
-        private Dispatcher _dispatcher;
+        _aggregate = (AggregateRoot) Activator.CreateInstance(typeof(TAggregate))!;
+        _repository = (TRepository) Activator.CreateInstance(typeof(TRepository), new FakeAggregateStore(_aggregate))!;
+    }
 
-        private TRepository _repository;
+    protected void RegisterHandlers<TCommandHandler>()
+        where TCommandHandler : CommandHandler
+    {
 
-        private AggregateRoot _aggregate;
+        var commandHandlerMap = new CommandHandlerMap((CommandHandler) Activator.CreateInstance(typeof(TCommandHandler), _repository)!);
+        _dispatcher = new Dispatcher(commandHandlerMap);
+    }
 
-        private Exception _exception;
+    protected void Given(params object[] events)
+    {
+        _exception = null;
+        _aggregate.Load(events);
+    }
 
-        protected AggregateTest()
+    protected async Task When(object command)
+    {
+        try
         {
-            _aggregate = (AggregateRoot) Activator.CreateInstance(typeof(TAggregate));
-            _repository = (TRepository) Activator.CreateInstance(typeof(TRepository), new FakeAggregateStore(_aggregate));
+            _aggregate.ClearChanges();
+            await _dispatcher.Dispatch(command, new CommandMetadata(new CorrelationId(Guid.NewGuid()), new CausationId(Guid.NewGuid())));
         }
-
-        protected void RegisterHandlers<TCommandHandler>()
-            where TCommandHandler : CommandHandler
+        catch (Exception e)
         {
-
-            var commandHandlerMap = new CommandHandlerMap((CommandHandler) Activator.CreateInstance(typeof(TCommandHandler), _repository));
-            _dispatcher = new Dispatcher(commandHandlerMap);
+            _exception = e;
         }
+    }
 
-        protected void Given(params object[] events)
-        {
-            _exception = null;
-            _aggregate.Load(events);
-        }
+    protected void Then(Action<List<object>> events)
+    {
+        if (_exception != null)
+            throw _exception;
 
-        protected async Task When(object command)
-        {
-            try
-            {
-                _aggregate.ClearChanges();
-                await _dispatcher.Dispatch(command, new CommandMetadata(new CorrelationId(Guid.NewGuid()), new CausationId(Guid.NewGuid())));
-            }
-            catch (Exception e)
-            {
-                _exception = e;
-            }
-        }
+        events(_aggregate.GetChanges().ToList());
+    }
 
-        protected void Then(Action<List<object>> events)
-        {
-            if (_exception != null)
-                throw _exception;
-
-            events(_aggregate.GetChanges().ToList());
-        }
-
-        protected void Then<TException>() where TException : Exception
-        {
-           Assert.Equal(typeof(TException), _exception.GetType());
-        }
+    protected void Then<TException>() where TException : Exception
+    {
+        Assert.Equal(typeof(TException), _exception!.GetType());
     }
 }

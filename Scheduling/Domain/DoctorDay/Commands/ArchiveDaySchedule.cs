@@ -1,14 +1,7 @@
 using Scheduling.EventSourcing;
 
-namespace Scheduling.Domain.DoctorDay.Commands
-{
-    public class ArchiveDaySchedule : Command<ArchiveDaySchedule>
-    {
-        public string DayId { get; }
+namespace Scheduling.Domain.DoctorDay.Commands;
 
-        public ArchiveDaySchedule(string dayId)
-        {
-            DayId = dayId;
-        }
-    }
-}
+public record ArchiveDaySchedule(
+    string DayId
+) : ICommand;

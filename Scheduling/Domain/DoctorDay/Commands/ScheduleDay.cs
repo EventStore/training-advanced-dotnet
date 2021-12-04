@@ -1,35 +1,39 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Scheduling.EventSourcing;
 
-namespace Scheduling.Domain.DoctorDay.Commands
+namespace Scheduling.Domain.DoctorDay.Commands;
+
+public record ScheduleDay(
+    Guid DoctorId,
+    DateTime Date,
+    List<ScheduledSlot> Slots
+) : ICommand
 {
-    public class ScheduleDay : Command<ScheduleDay>
+    public virtual bool Equals(ScheduleDay? other)
     {
-        public Guid DoctorId { get; }
-
-        public DateTime Date { get; }
-
-        public List<ScheduledSlot> Slots { get; }
-
-        public ScheduleDay(Guid doctorId, DateTime date, List<ScheduledSlot> slots)
-        {
-            DoctorId = doctorId;
-            Date = date;
-            Slots = slots;
-        }
+        return other is not null
+               && EqualityComparer<Guid>.Default.Equals(DoctorId, other.DoctorId)
+               && EqualityComparer<DateTime>.Default.Equals(Date, other.Date)
+               && Slots.SequenceEqual(other.Slots);
     }
 
-    public class ScheduledSlot
+    public override int GetHashCode()
     {
-        public TimeSpan Duration { get; }
-
-        public DateTime StartTime { get; }
-
-        public ScheduledSlot(TimeSpan duration, DateTime startTime)
+        HashCode hashcode = new();
+        hashcode.Add(DoctorId);
+        hashcode.Add(Date);
+        foreach (var item in Slots)
         {
-            Duration = duration;
-            StartTime = startTime;
+            hashcode.Add(item);
         }
+
+        return hashcode.ToHashCode();
     }
 }
+
+public record ScheduledSlot(
+    TimeSpan Duration,
+    DateTime StartTime
+);
