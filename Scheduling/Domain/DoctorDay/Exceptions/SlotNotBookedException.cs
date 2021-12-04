@@ -1,8 +1,7 @@
 using System;
 
-namespace Scheduling.Domain.DoctorDay.Exceptions
+namespace Scheduling.Domain.DoctorDay.Exceptions;
+
+public class SlotNotBookedException : Exception
 {
-    public class SlotNotBookedException : Exception
-    {
-    }
 }

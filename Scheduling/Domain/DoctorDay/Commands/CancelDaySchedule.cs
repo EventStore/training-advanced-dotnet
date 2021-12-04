@@ -1,14 +1,7 @@
 using Scheduling.EventSourcing;
 
-namespace Scheduling.Domain.DoctorDay.Commands
-{
-    public class CancelDaySchedule : Command<CancelDaySchedule>
-    {
-        public string DayId { get; }
+namespace Scheduling.Domain.DoctorDay.Commands;
 
-        public CancelDaySchedule(string dayId)
-        {
-            DayId = dayId;
-        }
-    }
-}
+public record CancelDaySchedule(
+    string DayId
+) : ICommand;

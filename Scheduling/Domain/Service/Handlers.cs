@@ -3,10 +3,10 @@ using Scheduling.Domain.DoctorDay;
 using Scheduling.Domain.DoctorDay.Commands;
 using Scheduling.Infrastructure.Commands;
 
-namespace Scheduling.Domain.Service
+namespace Scheduling.Domain.Service;
+
+public class Handlers : CommandHandler
 {
-    public class Handlers : CommandHandler
-    {
         private readonly IDayRepository _repository;
 
         public Handlers(IDayRepository repository)
@@ -48,5 +48,4 @@ namespace Scheduling.Domain.Service
                 await _repository.Save(day, m);
             });
         }
-    }
 }

@@ -1,11 +1,10 @@
 using System.Threading.Tasks;
 
-namespace Scheduling.Infrastructure.Projections
-{
-    public interface ICheckpointStore
-    {
-        Task<ulong?> GetCheckpoint();
+namespace Scheduling.Infrastructure.Projections;
 
-        Task StoreCheckpoint(ulong? checkpoint);
-    }
+public interface ICheckpointStore
+{
+    Task<ulong?> GetCheckpoint();
+
+    Task StoreCheckpoint(ulong? checkpoint);
 }

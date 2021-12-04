@@ -9,82 +9,80 @@ using Scheduling.Test.Test;
 using Xunit;
 using EventHandler = Scheduling.Infrastructure.Projections.EventHandler;
 
-namespace Scheduling.Test
+namespace Scheduling.Test;
+
+[Collection("TypeMapper collection")]
+public class AvailableSlotsHandlerTest : HandlerTest
 {
-    public class AvailableSlotsHandlerTest : HandlerTest
+    private static InMemoryAvailableSlotsRepository _repository = default!;
+
+    private readonly DateTime _now = DateTime.UtcNow;
+
+    private readonly TimeSpan _tenMinutes = TimeSpan.FromMinutes(10);
+
+    protected override EventHandler GetHandler()
     {
-        private static InMemoryAvailableSlotsRepository _repository;
+        _repository = new InMemoryAvailableSlotsRepository();
+        _repository.Clear();
+        return new AvailableSlotsProjection(_repository);
+    }
 
-        private readonly DateTime _now = DateTime.UtcNow;
-
-        private TimeSpan _tenMinutes = TimeSpan.FromMinutes(10);
-
-        protected override EventHandler GetHandler()
+    [Fact]
+    public async Task should_add_slot_to_the_list()
+    {
+        var scheduled = new SlotScheduled(Guid.NewGuid(), "dayId", _now, _tenMinutes);
+        await Given(scheduled);
+        Then(new List<AvailableSlot>
         {
-            _repository = new InMemoryAvailableSlotsRepository();
-            _repository.Clear();
-            return new AvailableSlotsProjection(_repository);
-        }
+            new AvailableSlot(
+                scheduled.SlotId.ToString(),
+                scheduled.DayId,
+                scheduled.SlotStartTime.Date,
+                scheduled.SlotStartTime,
+                scheduled.SlotDuration,
+                false
+            )
+        }, await _repository.GetAvailableSlotsOn(_now));
+    }
 
-        [Fact]
-        public async Task should_add_slot_to_the_list()
-        {
-            var scheduled = new SlotScheduled(Guid.NewGuid(), "dayId", _now, _tenMinutes);
-            await Given(scheduled);
-            Then(new List<AvailableSlot>
-            {
-                new AvailableSlot
-                {
-                    Date = scheduled.SlotStartTime.Date,
-                    Duration = scheduled.SlotDuration,
-                    Id = scheduled.SlotId.ToString(),
-                    DayId = scheduled.DayId,
-                    IsBooked = false,
-                    StartTime = scheduled.SlotStartTime
-                }
-            }, await _repository.GetAvailableSlotsOn(_now));
-        }
+    [Fact]
+    public async Task should_hide_the_slot_from_list_if_booked()
+    {
+        var scheduled = new SlotScheduled(Guid.NewGuid(), "dayId", _now, _tenMinutes);
+        await Given(
+            scheduled,
+            new SlotBooked("dayId", scheduled.SlotId, "PatientId"));
+        Then(new List<AvailableSlot>(), await _repository.GetAvailableSlotsOn(_now));
+    }
 
-        [Fact]
-        public async Task should_hide_the_slot_from_list_if_booked()
+    [Fact]
+    public async Task should_show_slot_if_booking_was_cancelled()
+    {
+        var scheduled = new SlotScheduled(Guid.NewGuid(), "dayId", _now, _tenMinutes);
+        await Given(
+            scheduled,
+            new SlotBooked("dayId", scheduled.SlotId, "PatientId"),
+            new SlotBookingCancelled("dayId", scheduled.SlotId, "Reason"));
+        Then(new List<AvailableSlot>
         {
-            var scheduled = new SlotScheduled(Guid.NewGuid(), "dayId", _now, _tenMinutes);
-            await Given(
-                scheduled,
-                new SlotBooked("dayId", scheduled.SlotId, "PatientId"));
-            Then(new List<AvailableSlot>(), await _repository.GetAvailableSlotsOn(_now));
-        }
+            new AvailableSlot(
+                scheduled.SlotId.ToString(),
+                scheduled.DayId,
+                scheduled.SlotStartTime.Date,
+                scheduled.SlotStartTime,
+                scheduled.SlotDuration,
+                false
+            )
+        }, await _repository.GetAvailableSlotsOn(_now));
+    }
 
-        [Fact]
-        public async Task should_show_slot_if_booking_was_cancelled()
-        {
-            var scheduled = new SlotScheduled(Guid.NewGuid(), "dayId", _now, _tenMinutes);
-            await Given(
-                scheduled,
-                new SlotBooked("dayId", scheduled.SlotId, "PatientId"),
-                new SlotBookingCancelled("dayId", scheduled.SlotId, "Reason"));
-            Then(new List<AvailableSlot>
-            {
-                new AvailableSlot
-                {
-                    Date = scheduled.SlotStartTime.Date,
-                    Duration = scheduled.SlotDuration,
-                    Id = scheduled.SlotId.ToString(),
-                    DayId = scheduled.DayId,
-                    IsBooked = false,
-                    StartTime = scheduled.SlotStartTime
-                }
-            }, await _repository.GetAvailableSlotsOn(_now));
-        }
-
-        [Fact]
-        public async Task should_delete_slot_if_slot_was_cancelled()
-        {
-            var scheduled = new SlotScheduled(Guid.NewGuid(), "dayId", _now, _tenMinutes);
-            await Given(
-                scheduled,
-                new SlotScheduleCancelled("dayId", scheduled.SlotId));
-            Then(new List<AvailableSlot>(), await _repository.GetAvailableSlotsOn(_now));
-        }
+    [Fact]
+    public async Task should_delete_slot_if_slot_was_cancelled()
+    {
+        var scheduled = new SlotScheduled(Guid.NewGuid(), "dayId", _now, _tenMinutes);
+        await Given(
+            scheduled,
+            new SlotScheduleCancelled("dayId", scheduled.SlotId));
+        Then(new List<AvailableSlot>(), await _repository.GetAvailableSlotsOn(_now));
     }
 }

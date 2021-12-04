@@ -1,9 +1,8 @@
 using System.Collections.Generic;
 
-namespace Scheduling.EventSourcing
+namespace Scheduling.EventSourcing;
+
+public interface IColdStorage
 {
-    public interface IColdStorage
-    {
-        void SaveAll(IEnumerable<object> events);
-    }
+    void SaveAll(IEnumerable<object> events);
 }

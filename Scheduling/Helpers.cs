@@ -1,37 +1,27 @@
-using System;
-using System.Net.Http;
 using EventStore.Client;
 using Scheduling.Domain.Service;
 using Scheduling.Infrastructure.Commands;
 using Scheduling.Infrastructure.EventStore;
 
-namespace Scheduling
+namespace Scheduling;
+
+public static class Helpers
 {
-    public static class Helpers
+    public static string Tenant => "Scheduling";
+
+    public static EventStoreClient GetEventStoreClient() =>
+        new(EventStoreClientSettings.Create("esdb://localhost:2113?tls=false"));
+
+    public static Dispatcher GetDispatcher(EsEventStore esStore)
     {
-        public static string Tenant { get; } = "Scheduling";
+        var aggregateStore = new EsAggregateStore(esStore, 5);
+        var dayRepository = new EventStoreDayRepository(aggregateStore);
 
-        public static EventStoreClient GetEventStoreClient() =>
-            new EventStoreClient(new EventStoreClientSettings
-            {
-                ConnectivitySettings =
-                {
-                    Address = new Uri("http://localhost:2113"),
-                },
-                DefaultCredentials = new UserCredentials("admin", "changeit"),
-            });
+        var handlers = new Handlers(dayRepository);
 
-        public static Dispatcher GetDispatcher(EsEventStore esStore)
-        {
-            var aggregateStore = new EsAggregateStore(esStore, 5);
-            var dayRepository = new EventStoreDayRepository(aggregateStore);
+        var commandHandlerMap = new CommandHandlerMap(handlers);
 
-            var handlers = new Handlers(dayRepository);
-
-            var commandHandlerMap = new CommandHandlerMap(handlers);
-
-            var dispatcher = new Dispatcher(commandHandlerMap);
-            return dispatcher;
-        }
+        var dispatcher = new Dispatcher(commandHandlerMap);
+        return dispatcher;
     }
 }

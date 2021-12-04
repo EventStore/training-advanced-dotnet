@@ -1,15 +1,6 @@
-namespace Scheduling.EventSourcing
-{
-    public class CommandMetadata
-    {
-        public CorrelationId CorrelationId { get; }
+namespace Scheduling.EventSourcing;
 
-        public CausationId CausationId { get; }
-
-        public CommandMetadata(CorrelationId correlationId, CausationId causationId)
-        {
-            CorrelationId = correlationId;
-            CausationId = causationId;
-        }
-    }
-}
+public record CommandMetadata(
+    CorrelationId CorrelationId,
+    CausationId CausationId
+);
