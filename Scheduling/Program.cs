@@ -1,65 +1,92 @@
 using System;
-using System.Net.Http;
 using System.Threading.Tasks;
 using EventStore.Client;
-using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.OpenApi.Models;
 using MongoDB.Driver;
+using Scheduling;
 using Scheduling.Application;
 using Scheduling.Domain.DoctorDay.Events;
+using Scheduling.Domain.ReadModel;
+using Scheduling.EventSourcing;
 using Scheduling.Infrastructure.EventStore;
 using Scheduling.Infrastructure.InMemory;
 using Scheduling.Infrastructure.MongoDb;
 using Scheduling.Infrastructure.Projections;
 
-namespace Scheduling
-{
-    public class Program
+var builder = WebApplication.CreateBuilder(args);
+var services = builder.Services;
+
+services.AddControllers().AddNewtonsoftJson();
+
+var mongoClient = new MongoClient("mongodb://localhost");
+
+var client = Helpers.GetEventStoreClient();
+var eventStore = new EsEventStore(client, Helpers.Tenant);
+
+services.AddSingleton<IEventStore>(eventStore)
+    .AddSingleton(Helpers.GetDispatcher(eventStore))
+    .AddSingleton(_ => mongoClient.GetDatabase("projections"))
+    .AddSingleton<IAvailableSlotsRepository, MongoDbAvailableSlotsRepository>()
+    .AddSwaggerGen(c =>
     {
-        public static async Task Main(string[] args)
-        {
-            EventMappings.MapEventTypes();
+        c.SwaggerDoc("v1", new OpenApiInfo { Title = "Patients API", Description = "API for booking doctor appointments", Version = "v1" });
+    });
 
-            var client = Helpers.GetEventStoreClient();
-            var esStore = new EsEventStore(client, Helpers.Tenant);
+EventMappings.MapEventTypes();
 
-            var mongoClient = new MongoClient("mongodb://localhost");
+var app = builder.Build();
 
-            var mongoDatabase = mongoClient.GetDatabase("projections");
-            var availableSlotsRepository = new MongoDbAvailableSlotsRepository(mongoDatabase);
+if (!app.Environment.IsDevelopment())
+{
+    app.UseDeveloperExceptionPage();
+}
 
-            var dispatcher = Helpers.GetDispatcher(esStore);
+app.UseHttpsRedirection()
+    .UseRouting()
+    .UseAuthorization()
+    .UseEndpoints(endpoints => { endpoints.MapControllers(); })
+    .UseSwagger()
+    .UseSwaggerUI(c =>
+    {
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "Patients API");
+    });
 
-            var commandStore = new EsCommandStore(esStore, client, dispatcher, Helpers.Tenant);
+await StartSubscriptionManager(mongoClient, eventStore, client);
+app.Run();
 
-            var dayArchiverProcessManager = new DayArchiverProcessManager(
-                new InMemoryColdStorage(),
-                new MongoDbArchivableDaysRepository(mongoDatabase),
-                commandStore,
-                TimeSpan.FromDays(-180),
-                esStore,
-                Guid.NewGuid);
+async Task StartSubscriptionManager(MongoClient mongoClient1, EsEventStore esEventStore,
+    EventStoreClient eventStoreClient)
+{
+    var mongoDatabase = mongoClient1.GetDatabase("projections");
+    var availableSlotsRepository = new MongoDbAvailableSlotsRepository(mongoDatabase);
 
-            var subManager = new SubscriptionManager(
-                client,
-                new EsCheckpointStore(client, "DaySubscription"),
-                "DaySubscription",
-                StreamName.AllStream,
-                new Projector(
-                    new AvailableSlotsProjection(availableSlotsRepository)
-                ),
-                new Projector(
-                    dayArchiverProcessManager)
-            );
+    var dispatcher = Helpers.GetDispatcher(esEventStore);
 
-            await subManager.Start();
-            await commandStore.Start();
+    var commandStore = new EsCommandStore(esEventStore, eventStoreClient, dispatcher, Helpers.Tenant);
 
-            CreateHostBuilder(args).Build().Run();
-        }
+    var dayArchiverProcessManager = new DayArchiverProcessManager(
+        new InMemoryColdStorage(),
+        new MongoDbArchivableDaysRepository(mongoDatabase),
+        commandStore,
+        TimeSpan.FromDays(-180),
+        esEventStore,
+        Guid.NewGuid);
 
-        public static IHostBuilder CreateHostBuilder(string[] args) =>
-            Host.CreateDefaultBuilder(args)
-                .ConfigureWebHostDefaults(webBuilder => { webBuilder.UseStartup<Startup>(); });
-    }
+    var subManager = new SubscriptionManager(
+        eventStoreClient,
+        new EsCheckpointStore(eventStoreClient, "DaySubscription"),
+        "DaySubscription",
+        StreamName.AllStream,
+        new Projector(
+            new AvailableSlotsProjection(availableSlotsRepository)
+        ),
+        new Projector(
+            dayArchiverProcessManager)
+    );
+
+    await subManager.Start();
+    await commandStore.Start();
 }

@@ -1,15 +1,17 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
     <PropertyGroup>
-        <TargetFramework>netcoreapp3.1</TargetFramework>
+        <TargetFramework>net6.0</TargetFramework>
+        <Nullable>enable</Nullable>
         <RootNamespace>Scheduling</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="EventStore.Client.Grpc.Streams" Version="20.10.0" />
-      <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.1.5" />
-      <PackageReference Include="MongoDB.Driver" Version="2.10.4" />
-      <PackageReference Include="RavenDB.Client" Version="4.2.103" />
+      <PackageReference Include="EventStore.Client.Grpc.Streams" Version="21.2.0" />
+      <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="6.0.0" />
+      <PackageReference Include="MongoDB.Driver" Version="2.14.0" />
+      <PackageReference Include="RavenDB.Client" Version="5.3.0" />
+      <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
     </ItemGroup>
 
 </Project>

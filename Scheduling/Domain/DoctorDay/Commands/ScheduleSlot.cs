@@ -1,28 +1,12 @@
 using System;
 using Scheduling.EventSourcing;
 
-namespace Scheduling.Domain.DoctorDay.Commands
-{
-    public class ScheduleSlot : Command<ScheduleSlot>
-    {
-        public Guid DoctorId { get; }
+namespace Scheduling.Domain.DoctorDay.Commands;
 
-        public DateTime Date { get; }
-
-        public Guid SlotId { get; }
-
-        public TimeSpan Duration { get; }
-
-        public DateTime StartTime { get; }
-
-        public ScheduleSlot(Guid slotId, Guid doctorId, DateTime date, TimeSpan duration, DateTime startTime)
-        {
-            SlotId = slotId;
-            DoctorId = doctorId;
-            Date = date;
-            Duration = duration;
-            StartTime = startTime;
-        }
-
-    }
-}
+public record ScheduleSlot(
+    Guid SlotId,
+    Guid DoctorId,
+    DateTime Date,
+    TimeSpan Duration,
+    DateTime StartTime
+) : ICommand;

@@ -1,15 +1,8 @@
 using System;
 using Scheduling.EventSourcing;
 
-namespace Scheduling.Domain.DoctorDay.Events
-{
-    public class CalendarDayStarted : Event<CalendarDayStarted>
-    {
-        public DateTime Date { get; }
+namespace Scheduling.Domain.DoctorDay.Events;
 
-        public CalendarDayStarted(DateTime date)
-        {
-            Date = date;
-        }
-    }
-}
+public record CalendarDayStarted(
+    DateTime Date
+) : IEvent;
