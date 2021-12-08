@@ -16,7 +16,7 @@ public static class EsEventSerde
         return dataToType(data);
     }
 
-    public static EventData Serialize(this object @event, Uuid uuid, CommandMetadata metadata)
+    public static EventData Serialize(this object @event, Uuid uuid, EventMetadata metadata)
     {
         var typeToData = TypeMapper.GetTypeToData(@event.GetType());
         var (name, jObject) = typeToData(@event);
@@ -28,7 +28,6 @@ public static class EsEventSerde
             data,
             Serialize(
                 new EventMetadata(
-                    @event.GetType().FullName!,
                     metadata.CorrelationId,
                     metadata.CausationId
                 )
@@ -43,6 +42,15 @@ public static class EsEventSerde
     {
         var jsonData = Encoding.UTF8.GetString(resolvedEvent.Event.Data.ToArray());
         return JsonConvert.DeserializeObject<T>(jsonData)!;
+    }
+
+    public static EventMetadata DeserializeMetadata(this ResolvedEvent resolvedEvent)
+    {
+        var jsonData = Encoding.UTF8.GetString(resolvedEvent.Event.Metadata.ToArray());
+        return JsonConvert.DeserializeObject<EventMetadata>(jsonData)! with
+        {
+            Position = resolvedEvent.Event.Position.CommitPosition
+        };
     }
 
     public static EventData SerializeSnapshot(this object snapshot, SnapshotMetadata metadata)
