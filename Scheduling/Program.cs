@@ -4,6 +4,7 @@ using EventStore.Client;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
 using MongoDB.Driver;
 using Scheduling;
@@ -12,6 +13,7 @@ using Scheduling.Domain.DoctorDay.Events;
 using Scheduling.Domain.ReadModel;
 using Scheduling.EventSourcing;
 using Scheduling.Infrastructure.EventStore;
+using Scheduling.Infrastructure.Headers;
 using Scheduling.Infrastructure.InMemory;
 using Scheduling.Infrastructure.MongoDb;
 using Scheduling.Infrastructure.Projections;
@@ -33,6 +35,12 @@ services.AddSingleton<IEventStore>(eventStore)
     .AddSwaggerGen(c =>
     {
         c.SwaggerDoc("v1", new OpenApiInfo { Title = "Patients API", Description = "API for booking doctor appointments", Version = "v1" });
+        c.OperationFilter<CommandMetadataOperationFilter>();
+        c.MapType<TimeSpan>(() => new OpenApiSchema
+        {
+            Type = "string",
+            Example = new OpenApiString("00:00:00")
+        });
     });
 
 EventMappings.MapEventTypes();

@@ -22,31 +22,36 @@ public abstract class HandlerTest
         var correlationId = new CorrelationId(Guid.NewGuid());
         var causationId = new CausationId(Guid.NewGuid());
 
+        ulong i = 0;
         foreach (var @event in events)
         {
             var metadata = new EventMetadata(
-                @event.GetType().FullName!,
                 correlationId,
-                causationId
+                causationId,
+                i
             );
 
             await _eventHandler.Handle(@event.GetType(), @event, metadata);
 
             if (EnableAtLeastOnceMonkey)
                 await _eventHandler.Handle(@event.GetType(), @event, metadata);
+
+            i++;
         }
 
         if (EnableAtLeastOnceMonkey)
         {
+            i = 0;
             foreach (var @event in events.Take(events.Length - 1))
             {
                 var metadata = new EventMetadata(
-                    @event.GetType().FullName!,
                     correlationId,
-                    causationId
+                    causationId,
+                    i
                 );
 
                 await _eventHandler.Handle(@event.GetType(), @event, metadata);
+                i++;
             }
         }
     }
