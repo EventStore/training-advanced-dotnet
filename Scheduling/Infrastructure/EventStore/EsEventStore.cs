@@ -36,7 +36,7 @@ public class EsEventStore : IEventStore
 
         var preparedEvents = events.Select(e => e.Serialize(
             Uuid.NewUuid(),
-            metadata
+            EventMetadata.From(metadata)
         )).ToList();
 
         if (version == -1)
@@ -56,7 +56,7 @@ public class EsEventStore : IEventStore
 
         var preparedEvents = events.Select(e => e.Serialize(
             Uuid.NewUuid(),
-            metadata
+            EventMetadata.From(metadata)
         )).ToList();
 
         return _client.AppendToStreamAsync(_tenantPrefix + streamName, StreamState.Any, preparedEvents);
