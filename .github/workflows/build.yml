@@ -1,0 +1,38 @@
+name: Build and test
+
+on:
+  # run it on push to the default repository branch
+  push:
+    branches: [main]
+  # run it during pull request
+  pull_request:
+
+jobs:
+  build-and-test-code:
+    name: Build and test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check Out Repo
+        uses: actions/checkout@v1
+
+      - name: Start containers
+        run: docker-compose up -d
+
+      - name: Setup .NET Core
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: "6.0.x"
+
+      - name: Restore NuGet packages
+        run: dotnet restore
+
+      - name: Build
+        run: dotnet build --configuration Release --no-restore
+
+      - name: Run tests
+        run: dotnet test --configuration Release --no-build
+
+      - name: Stop containers
+        if: always()
+        run: docker-compose -f "docker-compose.yml" down
