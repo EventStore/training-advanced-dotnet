@@ -1,0 +1,18 @@
+version: '3.7'
+
+services:
+  eventstore.db:
+    image: ghcr.io/eventstore/eventstore:21.10.1-alpha-arm64v8
+    environment:
+      - EVENTSTORE_INSECURE=true
+      - EVENTSTORE_RUN_PROJECTIONS=all
+      - EVENTSTORE_START_STANDARD_PROJECTIONS=true
+      - EVENTSTORE_ENABLE_ATOM_PUB_OVER_HTTP=true
+    ports:
+      - "2113:2113"
+  mong.db:
+    image: mongo
+    environment:
+      - MONGO_INITDB_DATABASE=projections
+    ports:
+      - "27017-27019:27017-27019"
