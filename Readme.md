@@ -19,7 +19,7 @@
    - `dotnet test` command,
    - or run through your IDE test runner.
 5. To start application run:
-   - `dotnet run` command
+   - `dotnet run --project ./Scheduling/Scheduling.csproj` command
    - or run it through your IDE.
 
 Any problems please contact training@eventstore.com
