@@ -31,7 +31,7 @@ public class EsCommandStore : ICommandStore
 
     public async Task Start()
     {
-        await _client.SubscribeToStreamAsync(_tenantPrefix + _streamName, StreamPosition.End, EventAppeared,
+        await _client.SubscribeToStreamAsync(_tenantPrefix + _streamName, FromStream.End, EventAppeared,
             subscriptionDropped: SubscriptionDropped);
     }
 

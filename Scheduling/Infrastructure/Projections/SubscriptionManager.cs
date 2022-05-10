@@ -37,8 +37,8 @@ public class SubscriptionManager
     {
         var position = await _checkpointStore.GetCheckpoint();
 
-        _subscription = _isAllStream? 
-            await _client.SubscribeToAllAsync(
+        _subscription = _isAllStream
+            ? await _client.SubscribeToAllAsync(
                 GetAllStreamPosition(),
                 EventAppeared,
                 subscriptionDropped: SubscriptionDropped)
@@ -48,13 +48,15 @@ public class SubscriptionManager
                 EventAppeared
             );
 
-        Position GetAllStreamPosition()
+        FromAll GetAllStreamPosition()
             => position.HasValue
-                ? new Position(position.Value, position.Value)
-                : Position.Start;
+                ? FromAll.After(new Position(position.Value, position.Value))
+                : FromAll.Start;
 
-        StreamPosition GetStreamPosition()
-            => position ?? StreamPosition.Start;
+        FromStream GetStreamPosition()
+            => position.HasValue
+                ? FromStream.After(position.Value) 
+                : FromStream.Start;
     }
 
     private static void SubscriptionDropped(StreamSubscription _, SubscriptionDroppedReason reason, Exception? c)
